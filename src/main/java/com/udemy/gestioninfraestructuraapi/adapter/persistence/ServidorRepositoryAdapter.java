@@ -49,11 +49,11 @@ class ServidorRepositoryAdapter implements BuscarServidorPort {
 	}
 	
 	@Override
-	public List<Servidor> buscarServidorPorNombre(Connection con, String nombre) throws PersistenceCustomException {
+	public List<Servidor> buscarServidorPorNombre(Connection con, Servidor servidor) throws PersistenceCustomException {
 		List<Servidor> servidores = new ArrayList<>();
 		
 		try(PreparedStatement st = con.prepareStatement(DbQuerys.BUSCARPORNOMBRE)) {
-			st.setString(1, "%" + nombre + "%");
+			st.setString(1, "%" + servidor.getNombre() + "%");
 			
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
@@ -73,11 +73,11 @@ class ServidorRepositoryAdapter implements BuscarServidorPort {
 	}
 	
 	@Override
-	public List<Servidor> buscarServidorPorIp(Connection con, String ip) throws PersistenceCustomException {
+	public List<Servidor> buscarServidorPorIp(Connection con, Servidor servidor) throws PersistenceCustomException {
 		List<Servidor> servidores = new ArrayList<>();
 		
 		try(PreparedStatement st = con.prepareStatement(DbQuerys.BUSCARPORIP)) {
-			st.setString(1, "%" + ip + "%");
+			st.setString(1, "%" + servidor.getIp() + "%");
 			
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {
@@ -120,11 +120,11 @@ class ServidorRepositoryAdapter implements BuscarServidorPort {
 	
 
 	@Override
-	public List<Servidor> buscarServidorPorOs(Connection con, String os) throws PersistenceCustomException {
+	public List<Servidor> buscarServidorPorOs(Connection con, Servidor servidor) throws PersistenceCustomException {
 		List<Servidor> servidores = new ArrayList<>();
 		
 		try(PreparedStatement st = con.prepareStatement(DbQuerys.BUSCARPOROS)) {
-			st.setString(1, "%" + os + "%");
+			st.setString(1, "%" + servidor.getOs() + "%");
 			
 			ResultSet rs = st.executeQuery();
 			while(rs.next()) {

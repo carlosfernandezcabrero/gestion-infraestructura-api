@@ -45,11 +45,13 @@ public class ServidorService implements BuscarServidorUseCase {
     public List<Servidor> buscarServidorPorNombre(BuscadorServidorNombre nombre) {
     	List<Servidor> servidores;
     	Connection con = null;
+    	Servidor servidor;
     	
     	try {
+    		servidor = new Servidor();
+    		servidor.setNombre(nombre.getNombre());
     		con = transManager.connect();
-    		
-    		servidores = buscarServidorPort.buscarServidorPorNombre(con, nombre.getNombre());
+    		servidores = buscarServidorPort.buscarServidorPorNombre(con, servidor);
     	} catch(PersistenceCustomException e) {
     		throw new ApplicationException(e.getMessage(), e);
     	} finally {
@@ -65,11 +67,13 @@ public class ServidorService implements BuscarServidorUseCase {
     public List<Servidor> buscarServidorPorIp(BuscadorServidorIp ip) {
     	List<Servidor> servidores;
     	Connection con = null;
+    	Servidor servidor;
     	
     	try {
+    		servidor = new Servidor();
+    		servidor.setIp(ip.getIp());
     		con = transManager.connect();
-    		
-    		servidores = buscarServidorPort.buscarServidorPorIp(con, ip.getIp());
+    		servidores = buscarServidorPort.buscarServidorPorIp(con, servidor);
     	} catch(PersistenceCustomException e) {
     		throw new ApplicationException(e.getMessage(), e);
     	} finally {
@@ -106,11 +110,13 @@ public class ServidorService implements BuscarServidorUseCase {
 	public List<Servidor> buscarServidorPorOs(BuscadorServidorOs os) {
 		List<Servidor> servidores;
     	Connection con = null;
+    	Servidor servidor;
     	
     	try {
+    		servidor = new Servidor();
+    		servidor.setOs(os.getOs());
     		con = transManager.connect();
-    		
-    		servidores = buscarServidorPort.buscarServidorPorOs(con, os.getOs());
+    		servidores = buscarServidorPort.buscarServidorPorOs(con, servidor);
     	} catch(PersistenceCustomException e) {
     		throw new ApplicationException(e.getMessage(), e);
     	} finally {
