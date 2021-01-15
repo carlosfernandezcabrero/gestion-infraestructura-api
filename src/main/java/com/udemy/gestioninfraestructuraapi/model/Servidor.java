@@ -2,30 +2,27 @@ package com.udemy.gestioninfraestructuraapi.model;
 
 public class Servidor {
 	
-	private Integer codigo;
+	private Integer id;
     private String nombre;
     private String ip;
-    private GrupoResolutor grupoResolutor;
     private String os;
 
     public Servidor(){}
 
-    public Servidor(Integer codigo){
-        this.setCodigo(codigo);
+    public Servidor(Integer id){
+        this.setId(id);
     }
     
-    public Servidor(String nombre, String ip, GrupoResolutor grupoResolutor, String os){
+    public Servidor(String nombre, String ip, String os){
         this.setNombre(nombre);
         this.setIp(ip);
-        this.setGrupoResolutor(grupoResolutor);
         this.setOs(os);
     }
 
-    public Servidor(Integer codigo, String nombre, String ip, GrupoResolutor grupoResolutor, String os){
-    	this.setCodigo(codigo);
+    public Servidor(Integer codigo, String nombre, String ip, String os){
+    	this.setId(codigo);
         this.setNombre(nombre);
         this.setIp(ip);
-        this.setGrupoResolutor(grupoResolutor);
         this.setOs(os);
     }
 
@@ -45,14 +42,6 @@ public class Servidor {
         this.ip = ip;
     }
 
-    public GrupoResolutor getGrupoResolutor() {
-        return grupoResolutor;
-    }
-
-    public void setGrupoResolutor(GrupoResolutor grupoResolutor) {
-        this.grupoResolutor = grupoResolutor;
-    }
-
     public String getOs() {
         return os;
     }
@@ -61,12 +50,12 @@ public class Servidor {
         this.os = os;
     }
     
-    public Integer getCodigo() {
-        return codigo;
+    public Integer getId() {
+        return id;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
 }
