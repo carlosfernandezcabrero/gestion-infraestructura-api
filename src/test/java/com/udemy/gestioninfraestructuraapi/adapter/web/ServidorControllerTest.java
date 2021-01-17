@@ -1,10 +1,10 @@
 package com.udemy.gestioninfraestructuraapi.adapter.web;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase;
+import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
+import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
+import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
+import com.udemy.gestioninfraestructuraapi.model.Servidor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,14 +17,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase;
-import com.udemy.gestioninfraestructuraapi.model.Servidor;
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase.BuscadorServidorNombre;
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase.BuscadorServidorIp;
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase.BuscadorServidorOs;
-import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
-import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ServidorControllerTest {
 	
@@ -35,17 +31,20 @@ class ServidorControllerTest {
 	
 	@InjectMocks
 	private ServidorController servidorController;
+
+	private final String fieldErrorString = "nombre";
+	private final String messageFieldError = "no debe estar vacio";
 	
-	private final Servidor servidor = new Servidor();
+	private final Servidor servidor = new Servidor(1, "splunk-server", "192.168.1.10",
+			"Windows NT");
 	private List<Servidor> servidores;
-	private final String nombreCampo = "nombre";
-	private final String mensaje = "no debe estar vacio";
-	private final String nombreObjeto = "BuscadorServidorNombre";
-	private final ObjectError fieldError = new FieldError(nombreObjeto, nombreCampo, mensaje);
+	private final ObjectError fieldError = new FieldError("BuscadorServidorNombre",
+			fieldErrorString, messageFieldError);
 	private List<ObjectError> errors;
+	private final String validationExceptionMessage = fieldErrorString + ": " + messageFieldError + " (null)";
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		servidores = new ArrayList<>();
 		errors = new ArrayList<>();
@@ -74,111 +73,33 @@ class ServidorControllerTest {
 	}
 
 	@Test
-	void testBuscarPorNombre() {
-		final BuscadorServidorNombre nombre = new BuscadorServidorNombre();
-		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-		Mockito.when(buscarServidorUseCase.buscarServidorPorNombre(nombre)).thenReturn(servidores);
-		ResponseEntity<List<Servidor>> respuesta = servidorController.buscarPorNombre(nombre, bindingResult);
-		List<Servidor> respuestaBody = respuesta.getBody();
-		
-		assertNotNull(respuesta);
-		assertNotNull(respuestaBody);
-		assertFalse(respuestaBody.isEmpty());
-		assertEquals(1, respuestaBody.size());
-		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
-		
-		Mockito.when(buscarServidorUseCase.buscarServidorPorNombre(nombre)).thenThrow(ApplicationException.class);
-		try {
-			servidorController.buscarPorNombre(nombre, bindingResult);
-		}catch(ControllerException e) {
-			assertTrue(true);
-		}
-		
-		Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-		Mockito.when(bindingResult.getAllErrors()).thenReturn(errors);
-		try{
-			servidorController.buscarPorNombre(nombre, bindingResult);
-		}catch(ValidationException e) {
-			assertEquals(nombreCampo + ": " + mensaje + " (null)", e.getMessage());
-		}
-	}
-
-	@Test
-	void testBuscarPorIp() {
-		final BuscadorServidorIp ip = new BuscadorServidorIp();
-		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-		Mockito.when(buscarServidorUseCase.buscarServidorPorIp(ip)).thenReturn(servidores);
-		ResponseEntity<List<Servidor>> respuesta = servidorController.buscarPorIp(ip, bindingResult);
-		List<Servidor> respuestaBody = respuesta.getBody();
-		
-		assertNotNull(respuesta);
-		assertNotNull(respuestaBody);
-		assertFalse(respuestaBody.isEmpty());
-		assertEquals(1, respuestaBody.size());
-		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
-		
-		Mockito.when(buscarServidorUseCase.buscarServidorPorIp(ip)).thenThrow(ApplicationException.class);
-		try {
-			servidorController.buscarPorIp(ip, bindingResult);
-		}catch(ControllerException e) {
-			assertTrue(true);
-		}
-		
-		Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-		Mockito.when(bindingResult.getAllErrors()).thenReturn(errors);
-		try{
-			respuesta = servidorController.buscarPorIp(ip, bindingResult);
-		}catch(ValidationException e) {
-			assertEquals(nombreCampo + ": " + mensaje + " (null)", e.getMessage());
-		}
-	}
-
-	@Test
 	void testBuscarPorId() {
-		String id = "test";
+		Integer id = 1;
+		final BuscarServidorUseCase.BuscarPorId buscarPorId = new BuscarServidorUseCase.BuscarPorId();
+		buscarPorId.setId(id);
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-		Mockito.when(buscarServidorUseCase.buscarServidorPorId(id)).thenReturn(servidor);
-		ResponseEntity<Servidor> respuesta = servidorController.buscarPorId(id);
+		Mockito.when(buscarServidorUseCase.buscarServidorPorId(buscarPorId)).thenReturn(servidor);
+		ResponseEntity<Servidor> respuesta = servidorController.buscarPorId(buscarPorId, bindingResult);
 		
 		assertNotNull(respuesta);
 		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
-		
-		Mockito.when(buscarServidorUseCase.buscarServidorPorId(id)).thenThrow(ApplicationException.class);
+
 		try {
-			servidorController.buscarPorId(id);
+			Mockito.when(bindingResult.hasErrors()).thenReturn(true);
+			Mockito.when(bindingResult.getAllErrors()).thenReturn(errors);
+			respuesta = servidorController.buscarPorId(buscarPorId, bindingResult);
+			assertNotNull(respuesta);
+			assertEquals(HttpStatus.OK, respuesta.getStatusCode());
+		}catch(ValidationException e){
+			assertEquals(validationExceptionMessage, e.getMessage());
+		}
+
+		try {
+			Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+			Mockito.when(buscarServidorUseCase.buscarServidorPorId(buscarPorId)).thenThrow(ApplicationException.class);
+			servidorController.buscarPorId(buscarPorId, bindingResult);
 		}catch(ControllerException e) {
 			assertTrue(true);
 		}
 	}
-
-	@Test
-	void testBuscarPorOs() {
-		final BuscadorServidorOs os = new BuscadorServidorOs();
-		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-		Mockito.when(buscarServidorUseCase.buscarServidorPorOs(os)).thenReturn(servidores);
-		ResponseEntity<List<Servidor>> respuesta = servidorController.buscarPorOs(os, bindingResult);
-		List<Servidor> respuestaBody = respuesta.getBody();
-		
-		assertNotNull(respuesta);
-		assertNotNull(respuestaBody);
-		assertFalse(respuestaBody.isEmpty());
-		assertEquals(1, respuestaBody.size());
-		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
-		
-		Mockito.when(buscarServidorUseCase.buscarServidorPorOs(os)).thenThrow(ApplicationException.class);
-		try {
-			servidorController.buscarPorOs(os, bindingResult);
-		}catch(ControllerException e) {
-			assertTrue(true);
-		}
-		
-		Mockito.when(bindingResult.hasErrors()).thenReturn(true);
-		Mockito.when(bindingResult.getAllErrors()).thenReturn(errors);
-		try{
-			respuesta = servidorController.buscarPorOs(os, bindingResult);
-		}catch(ValidationException e) {
-			assertEquals(nombreCampo + ": " + mensaje + " (null)", e.getMessage());
-		}
-	}
-
 }
