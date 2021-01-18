@@ -1,6 +1,6 @@
 package com.udemy.gestioninfraestructuraapi.exception;
 
-public class ApplicationException extends RuntimeException {
+public class ApplicationException extends Exception {
 	
 	/**
 	 * 
@@ -10,9 +10,4 @@ public class ApplicationException extends RuntimeException {
 	public ApplicationException(String msg, Throwable causa) {
 		super(msg, causa);
 	}
-	
-	public ApplicationException(String msg) {
-		super(msg);
-	}
-
 }

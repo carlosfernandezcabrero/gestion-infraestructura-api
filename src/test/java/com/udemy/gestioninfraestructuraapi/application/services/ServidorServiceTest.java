@@ -1,100 +1,56 @@
 package com.udemy.gestioninfraestructuraapi.application.services;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.application.innermodel.BuscarPorId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
-import com.udemy.gestioninfraestructuraapi.application.port.TransManager;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase.BuscadorServidorIp;
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase.BuscadorServidorNombre;
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase.BuscadorServidorOs;
 
 class ServidorServiceTest {
-	
+
+	@Mock
+	BuscarServidorPort buscarServidorPort;
+
 	@InjectMocks
 	private ServidorService servidorService;
-	
-	@Mock
-	private TransManager transManager;
-	@Mock
-	private BuscarServidorPort buscarServidorPort;
-	
-	private Connection con;
-	private final Servidor servidor = new Servidor();
+
+	final Servidor servidor = new Servidor(1, "splunk-server", "192.168.1.10", "Windows NT");
 	private List<Servidor> servidores;
-	private final BuscadorServidorNombre buscadorServidorNombre = new BuscadorServidorNombre();
-	private final BuscadorServidorOs buscadorServidorOs = new BuscadorServidorOs();
-	private final BuscadorServidorIp buscadorServidorIp = new BuscadorServidorIp();
 
 	@BeforeEach
-	void setUp() throws Exception {
-		MockitoAnnotations.openMocks(this);
-		Mockito.when(transManager.connect()).thenReturn(con);
+	void setUp() {
 		servidores = new ArrayList<>();
-		servidores.add(servidor);
+		servidores.add(new Servidor());
+
+		MockitoAnnotations.openMocks(this);
 	}
 
 	@Test
 	void testBuscarServidorPorId() throws PersistenceCustomException {
-		Mockito.when(buscarServidorPort.buscarServidorPorId(con, "test")).thenReturn(servidor);
-		Servidor respuesta = servidorService.buscarServidorPorId("test");
-		
-		assertNotNull(respuesta);
-		assertEquals(servidor, respuesta);
-		
 		try {
-			Mockito.when(buscarServidorPort.buscarServidorPorId(con, "test")).thenThrow(PersistenceCustomException.class);
-			servidorService.buscarServidorPorId("test");
-		}catch(ApplicationException e) {
-			assertTrue(true);
-		}
-	}
+			final String id = "1";
+			final BuscarPorId buscarPorId = new BuscarPorId(id);
+			when(buscarServidorPort.buscarServidorPorId(new Servidor())).thenReturn(new Servidor());
+			Servidor servidorRespuesta = servidorService.buscarServidorPorId(buscarPorId);
 
-	@Test
-	void testBuscarServidorPorNombre() throws PersistenceCustomException {
-		Mockito.when(buscarServidorPort.buscarServidorPorNombre(con, servidor)).thenReturn(servidores);
-		List<Servidor> respuesta = servidorService.buscarServidorPorNombre(buscadorServidorNombre);
-		
-		assertNotNull(respuesta);
-		assertEquals(servidores, respuesta);
-		assertFalse(respuesta.isEmpty());
-		assertEquals(1, respuesta.size());
-		
-		try {
-			Mockito.when(buscarServidorPort.buscarServidorPorNombre(con, servidor)).thenThrow(PersistenceCustomException.class);
-			servidorService.buscarServidorPorNombre(buscadorServidorNombre);
-		}catch(ApplicationException e) {
-			assertTrue(true);
-		}
-	}
+			assertNotNull(servidorRespuesta);
+			assertEquals(servidor, servidorRespuesta);
 
-	@Test
-	void testBuscarServidorPorIp() throws PersistenceCustomException {
-		try {
-			Mockito.when(buscarServidorPort.buscarServidorPorIp(con, servidor)).thenReturn(servidores);
-			List<Servidor> respuesta = servidorService.buscarServidorPorIp(buscadorServidorIp);
-			
-			assertNotNull(respuesta);
-			assertEquals(servidores, respuesta);
-			assertFalse(respuesta.isEmpty());
-			assertEquals(1, respuesta.size());
-			
-			Mockito.when(buscarServidorPort.buscarServidorPorIp(con, servidor)).thenThrow(PersistenceCustomException.class);
-			servidorService.buscarServidorPorIp(buscadorServidorIp);
-		}catch(ApplicationException e) {
+			when(buscarServidorPort.buscarServidorPorId(servidor)).thenThrow(PersistenceCustomException.class);
+			servidorService.buscarServidorPorId(buscarPorId);
+		} catch (ApplicationException e) {
 			assertTrue(true);
 		}
 	}
@@ -102,37 +58,18 @@ class ServidorServiceTest {
 	@Test
 	void testBuscarTodos() throws PersistenceCustomException {
 		try {
-			Mockito.when(buscarServidorPort.buscarTodos(con)).thenReturn(servidores);
+			when(buscarServidorPort.buscarTodos()).thenReturn(servidores);
 			List<Servidor> respuesta = servidorService.buscarTodos();
-			
+
 			assertNotNull(respuesta);
 			assertEquals(servidores, respuesta);
 			assertFalse(respuesta.isEmpty());
 			assertEquals(1, respuesta.size());
-			
-			Mockito.when(buscarServidorPort.buscarTodos(con)).thenThrow(PersistenceCustomException.class);
+
+			when(buscarServidorPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
 			servidorService.buscarTodos();
-		}catch(ApplicationException e) {
+		} catch (ApplicationException e) {
 			assertTrue(true);
 		}
 	}
-
-	@Test
-	void testBuscarServidorPorOs() throws PersistenceCustomException {
-		try {
-			Mockito.when(buscarServidorPort.buscarServidorPorOs(con, servidor)).thenReturn(servidores);
-			List<Servidor> respuesta = servidorService.buscarServidorPorOs(buscadorServidorOs);
-			
-			assertNotNull(respuesta);
-			assertEquals(servidores, respuesta);
-			assertFalse(respuesta.isEmpty());
-			assertEquals(1, respuesta.size());
-			
-			Mockito.when(buscarServidorPort.buscarServidorPorIp(con, servidor)).thenThrow(PersistenceCustomException.class);
-			servidorService.buscarServidorPorOs(buscadorServidorOs);
-		}catch(ApplicationException e) {
-			assertTrue(true);
-		}
-	}
-
 }

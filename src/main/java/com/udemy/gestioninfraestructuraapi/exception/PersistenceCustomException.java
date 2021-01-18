@@ -10,9 +10,4 @@ public class PersistenceCustomException extends Exception{
 	public PersistenceCustomException(String msg, Throwable causa) {
 		super(msg, causa);
 	}
-	
-	public PersistenceCustomException(String msg) {
-		super(msg);
-	}
-
 }
