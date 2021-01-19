@@ -1,9 +1,9 @@
 package com.udemy.gestioninfraestructuraapi.adapter.web;
 
-import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorUseCase;
+import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorPorCodigoUseCase;
+import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosServidorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase;
-import com.udemy.gestioninfraestructuraapi.application.innermodel.BuscarPorId;
-import com.udemy.gestioninfraestructuraapi.application.innermodel.CrearServidor;
+import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase.CrearServidor;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
@@ -24,7 +24,9 @@ import java.util.List;
 class ServidorController {
 
 	@Autowired
-	private BuscarServidorUseCase buscarServidorUseCase;
+	private BuscarServidorPorCodigoUseCase buscarServidorPorCodigoUseCase;
+	@Autowired
+	private BuscarTodosServidorUseCase buscarTodosServidorUseCase;
 	@Autowired
 	private CrearServidorUseCase crearServidorUseCase;
 
@@ -33,7 +35,7 @@ class ServidorController {
 		List<Servidor> servidores;
 
 		try {
-			servidores = buscarServidorUseCase.buscarTodos();
+			servidores = buscarTodosServidorUseCase.buscarTodos();
 		} catch (ApplicationException e) {
 			throw new ControllerException(e.getMessage(), e);
 		}
@@ -41,19 +43,12 @@ class ServidorController {
 		return new ResponseEntity<>(servidores, HttpStatus.OK);
 	}
 
-	@GetMapping("/buscarPorId")
-	public ResponseEntity<Servidor> buscarPorId(@Valid @RequestParam BuscarPorId buscarPorId,
-			BindingResult bindingResult) throws ControllerException {
+	@GetMapping("/buscarPorCodigo/{codigo}")
+	public ResponseEntity<Servidor> buscarPorCodigo(@PathVariable String codigo) throws ControllerException {
 		Servidor servidor;
 
 		try {
-			if (bindingResult.hasErrors()) {
-				FieldError fe = (FieldError) bindingResult.getAllErrors().get(0);
-				throw new ValidationException(
-						fe.getField() + ": " + fe.getDefaultMessage() + " (" + fe.getRejectedValue() + ")");
-			} else {
-				servidor = buscarServidorUseCase.buscarServidorPorId(buscarPorId);
-			}
+			servidor = buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(codigo);
 		} catch (ApplicationException e) {
 			throw new ControllerException(e.getMessage(), e);
 		}
@@ -62,7 +57,7 @@ class ServidorController {
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<Servidor> crear(@Valid @RequestParam CrearServidor crearServidor, BindingResult bindingResult)
+	public ResponseEntity<Servidor> crear(@Valid @RequestBody CrearServidor crearServidor, BindingResult bindingResult)
 			throws ControllerException {
 		Servidor servidor = null;
 		StringBuilder stringBuilder = new StringBuilder();
@@ -82,6 +77,6 @@ class ServidorController {
 			throw new ControllerException(e.getMessage(), e);
 		}
 
-		return new ResponseEntity<>(servidor, HttpStatus.OK);
+		return new ResponseEntity<>(servidor, HttpStatus.CREATED);
 	}
 }
