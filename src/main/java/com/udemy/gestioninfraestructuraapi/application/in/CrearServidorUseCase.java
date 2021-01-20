@@ -10,6 +10,7 @@ public interface CrearServidorUseCase {
     Servidor crear(CrearServidor crearServidor) throws ApplicationException;
 
     public final class CrearServidor {
+    	
         @NotBlank
         String codigo;
         @NotBlank
@@ -20,5 +21,39 @@ public interface CrearServidorUseCase {
         String os;
         @NotBlank
         String grupoResolutor;
+        
+		public String getCodigo() {
+			return codigo;
+		}
+		public String getNombre() {
+			return nombre;
+		}
+		public String getIp() {
+			return ip;
+		}
+		public String getOs() {
+			return os;
+		}
+		public String getGrupoResolutor() {
+			return grupoResolutor;
+		}
+		
+		public void setCodigo(String codigo) {
+			this.codigo = codigo;
+		}
+		public void setNombre(String nombre) {
+			this.nombre = nombre;
+		}
+		public void setIp(String ip) {
+			this.ip = ip;
+		}
+		public void setOs(String os) {
+			this.os = os;
+		}
+		public void setGrupoResolutor(String grupoResolutor) {
+			this.grupoResolutor = grupoResolutor;
+		}
+		
     }
+    
 }
