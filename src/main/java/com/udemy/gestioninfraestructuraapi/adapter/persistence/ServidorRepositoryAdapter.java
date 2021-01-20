@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.udemy.gestioninfraestructuraapi.connection.TransManager;
-import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,72 +18,65 @@ import com.udemy.gestioninfraestructuraapi.resource.DbQuerys;
 
 @Component
 class ServidorRepositoryAdapter implements BuscarServidorPort {
-	
+
 	private static final String COLUMNANOMBRE = "nombre";
 	private static final String COLUMNAIP = "ip";
 	private static final String COLUMNAOS = "os";
 	private static final String COLUMNACODIGO = "codigo";
-	private Connection connection;
 	@Autowired
 	private TransManager transManager;
 
-	public ServidorRepositoryAdapter() throws ApplicationException {
-		try {
-			connection = transManager.connect();
-		}catch (PersistenceCustomException e){
-			throw new ApplicationException(e.getMessage(), e);
-		}
-	}
-	
 	@Override
 	public Servidor buscarServidorPorId(Servidor servidor) throws PersistenceCustomException {
 		Servidor servidorRes = null;
-		
-		try(PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCARPORCODIGO)) {
-			st.setInt(1, servidor.getId());
-			
+		Connection connection = transManager.connect();
+
+		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCARPORCODIGO)) {
+			st.setLong(1, servidor.getCodigo());
+
 			ResultSet rs = st.executeQuery();
-			if(rs.next()) {
-				servidorRes = new Servidor(
-							rs.getInt(COLUMNACODIGO),
-							rs.getString(COLUMNANOMBRE),
-							rs.getString(COLUMNAIP),
-							rs.getString(COLUMNAOS)
-							);
+			if (rs.next()) {
+				servidorRes = new Servidor();
+				servidorRes.setCodigo(rs.getLong(COLUMNACODIGO));
+				servidorRes.setNombre(rs.getString(COLUMNANOMBRE));
+				servidorRes.setIp(rs.getString(COLUMNAIP));
+				servidorRes.setOs(rs.getString(COLUMNAOS));
 			}
-		} catch(SQLException e) {
-			throw new PersistenceCustomException(e.getMessage()	, e);
+		} catch (SQLException e) {
+			throw new PersistenceCustomException(e.getMessage(), e);
 		} finally {
-			if(connection != null){
+			if (connection != null) {
 				transManager.closeFinally();
 			}
 		}
-		
+
 		return servidorRes;
 	}
-	
+
 	@Override
 	public List<Servidor> buscarTodos() throws PersistenceCustomException {
 		List<Servidor> servidores = new ArrayList<>();
-		
-		try(PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCARTODOSSERVIDORES)) {
+		Servidor servidor;
+		Connection connection = transManager.connect();
+
+		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCARTODOSSERVIDORES)) {
 			ResultSet rs = st.executeQuery();
-			while(rs.next()) {
-				servidores.add(new Servidor(
-											rs.getInt(COLUMNACODIGO),
-											rs.getString(COLUMNANOMBRE),
-											rs.getString(COLUMNAIP),
-											rs.getString(COLUMNAOS)
-											));
+			while (rs.next()) {
+				servidor = new Servidor();
+				servidor.setCodigo(rs.getLong(COLUMNACODIGO));
+				servidor.setNombre(rs.getString(COLUMNANOMBRE));
+				servidor.setIp(rs.getString(COLUMNAIP));
+				servidor.setOs(rs.getString(COLUMNAOS));
+				servidores.add(servidor);
 			}
-		} catch(SQLException e) {
-			throw new PersistenceCustomException(e.getMessage()	, e);
+		} catch (SQLException e) {
+			throw new PersistenceCustomException(e.getMessage(), e);
 		} finally {
-			if(connection != null) {
+			if (connection != null) {
 				transManager.closeFinally();
 			}
 		}
-		
+
 		return servidores;
 	}
 }

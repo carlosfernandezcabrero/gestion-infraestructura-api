@@ -12,27 +12,26 @@ import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 class GestionInfraestructuraApiAdapter implements TransManager {
 
 	private Connection connection;
-	
+
 	@Override
 	public Connection connect() throws PersistenceCustomException {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/GestionInfraestructuraApi",
-													 "rdeveloper",
-													 "developer");
-		} catch(SQLException | ClassNotFoundException e) {
+					"rdeveloper", "developer");
+		} catch (SQLException | ClassNotFoundException e) {
 			throw new PersistenceCustomException(e.getMessage(), e);
 		}
-		
+
 		return connection;
 	}
 
 	private void close() throws PersistenceCustomException {
 		try {
-			if(!connection.isClosed()) {
+			if (!connection.isClosed()) {
 				connection.close();
 			}
-		} catch(SQLException e) {
+		} catch (SQLException e) {
 			throw new PersistenceCustomException(e.getMessage(), e);
 		}
 	}

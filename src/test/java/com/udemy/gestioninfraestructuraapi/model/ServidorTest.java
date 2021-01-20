@@ -37,8 +37,8 @@ class ServidorTest {
 
     @Test
     void id() {
-        Integer id = 1;
-        servidor.setId(id);
-        assertEquals(id, servidor.getId());
+        long id = 1;
+        servidor.setCodigo(id);
+        assertEquals(id, servidor.getCodigo());
     }
 }
