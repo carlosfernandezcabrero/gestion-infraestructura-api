@@ -1,6 +1,7 @@
 package com.udemy.gestioninfraestructuraapi.adapter.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
-import com.udemy.gestioninfraestructuraapi.resource.ErrorResponse;
 
 @RestControllerAdvice
 class ExceptionHandlerController {
@@ -19,40 +19,33 @@ class ExceptionHandlerController {
 	/***
 	 * Metodo que captura las excepciones de tipo ControllerException
 	 * @param ex
-	 * @return ResponseEntity de ErrorResponse y HttpStatus INTERNAL_SERVER_ERROR
+	 * @return ResponseEntity de String y HttpStatus INTERNAL_SERVER_ERROR
 	 */
 	@ExceptionHandler(value = ControllerException.class)
-    public ResponseEntity<ErrorResponse> controllerException(ControllerException ex) {
-    	ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+    public ResponseEntity<String> controllerException(ControllerException ex) {
 		ex.printStackTrace();
-		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 
 	/***
 	 * Metodo que captura las excepciones de tipo ValidationException
 	 * @param e
-	 * @return ResponseEntity de List de ErrorResponse y HttpStatus BAD_REQUEST
+	 * @return ResponseEntity de List de String y HttpStatus BAD_REQUEST
 	 */
 	@ExceptionHandler(value = ValidationException.class)
-	public ResponseEntity<List<ErrorResponse>> validationException(ValidationException e){
-    	List<ErrorResponse> errorResponses = new ArrayList<>();
-
-    	for(String i : e.getMessage().split("\\|")){
-    		errorResponses.add(new ErrorResponse(i));
-		}
-
-    	return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+	public ResponseEntity<List<String>> validationException(ValidationException e){
+		List<String> errorResponses = new ArrayList<>(Arrays.asList(e.getMessage().split("\\|")));
+    	return ResponseEntity.badRequest().body(errorResponses);
 	}
 
 	/***
 	 * Metodo que captura las excepciones de tipo NotFoundException
 	 * @param exception
-	 * @return ResponseEntity de ErrorResponse y HttpStatus NO_CONTENT
+	 * @return ResponseEntity de String y HttpStatus NO_CONTENT
 	 */
 	@ExceptionHandler(value = NotFoundException.class)
-	public ResponseEntity<ErrorResponse> notFoundException(NotFoundException exception){
-		ErrorResponse response = new ErrorResponse(exception.getMessage());
-		return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+	public ResponseEntity<String> notFoundException(NotFoundException exception){
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
 	}
 	
 }
