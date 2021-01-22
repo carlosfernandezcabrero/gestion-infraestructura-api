@@ -37,26 +37,23 @@ class ServidorRepositoryAdapter implements BuscarServidorPort, BuscarTodosGeneri
 	@Override
 	public Servidor buscarServidorPorCodigo(Servidor servidor) throws PersistenceCustomException {
 		Servidor servidorRes = null;
-		Connection connection = transManager.connect();
 
-		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_POR_CODIGO)) {
+		try (Connection connection = transManager.connect();
+			 PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_POR_CODIGO)) {
 			st.setLong(1, servidor.getCodigo());
 
-			ResultSet rs = st.executeQuery();
-			if (rs.next()) {
-				servidorRes = new Servidor();
-				servidorRes.setCodigo(rs.getLong(COLUMNA_CODIGO));
-				servidorRes.setNombre(rs.getString(COLUMNA_NOMBRE));
-				servidorRes.setIp(rs.getString(COLUMNA_IP));
-				servidorRes.setOs(rs.getString(COLUMNA_OS));
-				servidorRes.setGrupoResolutor(rs.getString(COLUMNA_GRUPORESOLUTOR));
+			try(ResultSet rs = st.executeQuery()) {
+				if (rs.next()) {
+					servidorRes = new Servidor();
+					servidorRes.setCodigo(rs.getLong(COLUMNA_CODIGO));
+					servidorRes.setNombre(rs.getString(COLUMNA_NOMBRE));
+					servidorRes.setIp(rs.getString(COLUMNA_IP));
+					servidorRes.setOs(rs.getString(COLUMNA_OS));
+					servidorRes.setGrupoResolutor(rs.getString(COLUMNA_GRUPORESOLUTOR));
+				}
 			}
 		} catch (SQLException e) {
 			throw new PersistenceCustomException(e.getMessage(), e);
-		} finally {
-			if (connection != null) {
-				transManager.closeFinally();
-			}
 		}
 
 		return servidorRes;
@@ -66,25 +63,22 @@ class ServidorRepositoryAdapter implements BuscarServidorPort, BuscarTodosGeneri
 	public List<Servidor> buscarTodos() throws PersistenceCustomException {
 		List<Servidor> servidores = new ArrayList<>();
 		Servidor servidorRes;
-		Connection connection = transManager.connect();
 
-		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_TODOS_SERVIDORES)) {
-			ResultSet rs = st.executeQuery();
-			while (rs.next()) {
-				servidorRes = new Servidor();
-				servidorRes.setCodigo(rs.getLong(COLUMNA_CODIGO));
-				servidorRes.setNombre(rs.getString(COLUMNA_NOMBRE));
-				servidorRes.setIp(rs.getString(COLUMNA_IP));
-				servidorRes.setOs(rs.getString(COLUMNA_OS));
-				servidorRes.setGrupoResolutor(rs.getString(COLUMNA_GRUPORESOLUTOR));
-				servidores.add(servidorRes);
+		try (Connection connection = transManager.connect();
+			 PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_TODOS_SERVIDORES)) {
+			try(ResultSet rs = st.executeQuery()) {
+				while (rs.next()) {
+					servidorRes = new Servidor();
+					servidorRes.setCodigo(rs.getLong(COLUMNA_CODIGO));
+					servidorRes.setNombre(rs.getString(COLUMNA_NOMBRE));
+					servidorRes.setIp(rs.getString(COLUMNA_IP));
+					servidorRes.setOs(rs.getString(COLUMNA_OS));
+					servidorRes.setGrupoResolutor(rs.getString(COLUMNA_GRUPORESOLUTOR));
+					servidores.add(servidorRes);
+				}
 			}
 		} catch (SQLException e) {
 			throw new PersistenceCustomException(e.getMessage(), e);
-		} finally {
-			if (connection != null) {
-				transManager.closeFinally();
-			}
 		}
 
 		return servidores;
@@ -92,22 +86,21 @@ class ServidorRepositoryAdapter implements BuscarServidorPort, BuscarTodosGeneri
 
 	@Override
 	public boolean crearGenerico(Servidor servidor) throws PersistenceCustomException {
-		Connection connection = transManager.connect();
 		boolean respuesta;
 
-		try(PreparedStatement statement = connection.prepareStatement(DbQuerys.CREAR_SERVIDOR)){
+		try(Connection connection = transManager.connect();
+			PreparedStatement statement = connection.prepareStatement(DbQuerys.CREAR_SERVIDOR)){
 			statement.setString(1, servidor.getNombre());
 			statement.setString(2, servidor.getIp());
 			statement.setString(3, servidor.getOs());
 			statement.setString(4, servidor.getGrupoResolutor());
 
 			respuesta = statement.executeUpdate() > 0;
+			if(respuesta){
+				connection.commit();
+			}
 		}catch(SQLException e){
 			throw new PersistenceCustomException(e.getMessage(), e);
-		} finally {
-			if (connection != null) {
-				transManager.closeFinally();
-			}
 		}
 
 		return respuesta;

@@ -30,24 +30,21 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
 
     @Override
     public GrupoResolutor buscarPorNombre(GrupoResolutor grupoResolutor) throws PersistenceCustomException {
-        Connection connection = transManager.connect();
         GrupoResolutor grupoResolutorResp = null;
 
-        try(PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_NOMBRE)){
+        try(Connection connection = transManager.connect();
+            PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_NOMBRE)){
             statement.setString(1, grupoResolutor.getNombre());
 
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()){
-                grupoResolutorResp = new GrupoResolutor();
-                grupoResolutorResp.setNombre(resultSet.getString(COLUMNA_NOMBRE));
-                grupoResolutorResp.setDescripcion(resultSet.getString(COLUMNA_DESCRIPCION));
+            try(ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    grupoResolutorResp = new GrupoResolutor();
+                    grupoResolutorResp.setNombre(resultSet.getString(COLUMNA_NOMBRE));
+                    grupoResolutorResp.setDescripcion(resultSet.getString(COLUMNA_DESCRIPCION));
+                }
             }
         }catch(SQLException e){
             throw new PersistenceCustomException(e.getMessage(), e);
-        }finally {
-            if(connection != null){
-                transManager.closeFinally();
-            }
         }
 
         return grupoResolutorResp;
@@ -55,24 +52,21 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
 
     @Override
     public List<GrupoResolutor> buscarTodos() throws PersistenceCustomException {
-        Connection connection = transManager.connect();
         List<GrupoResolutor> grupoResolutorList = new ArrayList<>();
         GrupoResolutor grupoResolutor;
 
-        try(PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_TODOS_GRUPORESOLUTOR)){
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()){
-                grupoResolutor = new GrupoResolutor();
-                grupoResolutor.setNombre(resultSet.getString(COLUMNA_NOMBRE));
-                grupoResolutor.setDescripcion(resultSet.getString(COLUMNA_DESCRIPCION));
-                grupoResolutorList.add(grupoResolutor);
+        try(Connection connection = transManager.connect();
+            PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_TODOS_GRUPORESOLUTOR)){
+            try(ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    grupoResolutor = new GrupoResolutor();
+                    grupoResolutor.setNombre(resultSet.getString(COLUMNA_NOMBRE));
+                    grupoResolutor.setDescripcion(resultSet.getString(COLUMNA_DESCRIPCION));
+                    grupoResolutorList.add(grupoResolutor);
+                }
             }
         }catch(SQLException e){
             throw new PersistenceCustomException(e.getMessage(), e);
-        }finally {
-            if(connection != null){
-                transManager.closeFinally();
-            }
         }
 
         return grupoResolutorList;
