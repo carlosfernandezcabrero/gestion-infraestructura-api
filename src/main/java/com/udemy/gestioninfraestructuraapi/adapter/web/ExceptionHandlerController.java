@@ -23,8 +23,12 @@ class ExceptionHandlerController {
 	 */
 	@ExceptionHandler(value = ControllerException.class)
     public ResponseEntity<String> controllerException(ControllerException ex) {
-		ex.printStackTrace();
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+		if (ex.getCause() == null){
+			return ResponseEntity.badRequest().body(ex.getMessage());
+		} else {
+			ex.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+		}
     }
 
 	/***

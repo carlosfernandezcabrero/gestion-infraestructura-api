@@ -53,6 +53,10 @@ class ServidorControllerTest {
 	private static final CrearServidor CREAR_SERVIDOR = new CrearServidor();
 	private List<ObjectError> errors;
 
+	private static final String MENSAJE_EXCEPTION = "test";
+	private static final ApplicationException APPLICATION_EXCEPTION_NULL = new ApplicationException(MENSAJE_EXCEPTION, null);
+	private static final ApplicationException APPLICATION_EXCEPTION = new ApplicationException(MENSAJE_EXCEPTION, new Throwable());
+
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
@@ -134,14 +138,31 @@ class ServidorControllerTest {
 			}
 			assertEquals(stringBuilder.toString(), e.getMessage());
 		}
-		
+	}
+
+	@Test
+	void crearControllerExceptionNotNull() throws ApplicationException {
 		try {
 			Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-			Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenThrow(ApplicationException.class);
+			Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenThrow(APPLICATION_EXCEPTION);
 			servidorController.crear(CREAR_SERVIDOR, bindingResult);
 		} catch (ControllerException e) {
 			assertNotNull(e);
 			assertNotNull(e.getCause());
+			assertEquals(MENSAJE_EXCEPTION, e.getMessage());
+		}
+	}
+
+	@Test
+	void crearControllerExceptionNull() throws ApplicationException {
+		try {
+			Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+			Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenThrow(APPLICATION_EXCEPTION_NULL);
+			servidorController.crear(CREAR_SERVIDOR, bindingResult);
+		} catch (ControllerException e) {
+			assertNotNull(e);
+			assertNull(e.getCause());
+			assertEquals(MENSAJE_EXCEPTION, e.getMessage());
 		}
 	}
 

@@ -34,7 +34,7 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
 
         try(Connection connection = transManager.connect();
             PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_NOMBRE)){
-            statement.setString(1, grupoResolutor.getNombre());
+            statement.setString(1, "%" + grupoResolutor.getNombre() + "%");
 
             try(ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {

@@ -102,7 +102,11 @@ class ServidorController {
 				}
 			}
 		} catch (ApplicationException e) {
-			throw new ControllerException(e.getMessage(), e);
+			if (e.getCause() == null){
+				throw new ControllerException(e.getMessage(), null);
+			} else {
+				throw new ControllerException(e.getMessage(), e);
+			}
 		}
 	}
 }

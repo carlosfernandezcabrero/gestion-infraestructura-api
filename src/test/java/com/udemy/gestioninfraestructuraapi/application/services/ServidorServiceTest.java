@@ -46,6 +46,10 @@ class ServidorServiceTest {
     private static final Servidor SERVIDOR = new Servidor();
     private static final CrearServidor CREARSERVIDOR = new CrearServidor();
 
+    private static final String MENSAJE_EXCEPTION = "test";
+    private static final PersistenceCustomException PERSISTENCE_CUSTOM_EXCEPTION_NULL = new PersistenceCustomException(MENSAJE_EXCEPTION, null);
+    private static final PersistenceCustomException PERSISTENCE_CUSTOM_EXCEPTION = new PersistenceCustomException(MENSAJE_EXCEPTION, new Throwable());
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -141,13 +145,26 @@ class ServidorServiceTest {
     }
     
     @Test
-    void testCrearApplicationException() throws PersistenceCustomException {
+    void testCrearApplicationExceptionNotNull() throws PersistenceCustomException {
     	try {
-	    	Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PersistenceCustomException.class);
+	    	Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION);
 	    	service.crear(CREARSERVIDOR);
     	}catch(ApplicationException e) {
     		assertNotNull(e);
     		assertNotNull(e.getCause());
+    		assertEquals(MENSAJE_EXCEPTION, e.getMessage());
     	}
+    }
+
+    @Test
+    void testCrearApplicationExceptionNull() throws PersistenceCustomException {
+        try {
+            Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION_NULL);
+            service.crear(CREARSERVIDOR);
+        }catch(ApplicationException e) {
+            assertNotNull(e);
+            assertNull(e.getCause());
+            assertEquals(MENSAJE_EXCEPTION, e.getMessage());
+        }
     }
 }

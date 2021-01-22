@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExceptionHandlerControllerTest {
 
     private static final String MENSAJE_EXCEPCION = "test";
-    private static final ControllerException CONTROLLER_EXCEPTION_GOOD = new ControllerException(MENSAJE_EXCEPCION, new Throwable());
+    private static final ControllerException CONTROLLER_EXCEPTION_CAUSE = new ControllerException(MENSAJE_EXCEPCION, new Throwable());
+    private static final ControllerException CONTROLLER_EXCEPTION_NOT_CAUSE = new ControllerException(MENSAJE_EXCEPCION, null);
     private static final ValidationException VALIDATION_EXCEPTION = new ValidationException("El campo nombre no debe estar vacio|El id no es correcto|");
     private static final NotFoundException NOT_FOUND_EXCEPTION = new NotFoundException();
 
@@ -22,10 +23,18 @@ class ExceptionHandlerControllerTest {
 
     @Test()
     void controllerExceptionInternalServerError() {
-        final ResponseEntity<String> respuesta = EXCEPTION_HANDLER_CONTROLLER.controllerException(CONTROLLER_EXCEPTION_GOOD);
+        final ResponseEntity<String> respuesta = EXCEPTION_HANDLER_CONTROLLER.controllerException(CONTROLLER_EXCEPTION_CAUSE);
         assertNotNull(respuesta);
         assertEquals(MENSAJE_EXCEPCION, respuesta.getBody());
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, respuesta.getStatusCode());
+    }
+
+    @Test()
+    void controllerExceptionBadRequest(){
+        final ResponseEntity<String> respuesta = EXCEPTION_HANDLER_CONTROLLER.controllerException(CONTROLLER_EXCEPTION_NOT_CAUSE);
+        assertNotNull(respuesta);
+        assertEquals(MENSAJE_EXCEPCION, respuesta.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, respuesta.getStatusCode());
     }
 
     @Test

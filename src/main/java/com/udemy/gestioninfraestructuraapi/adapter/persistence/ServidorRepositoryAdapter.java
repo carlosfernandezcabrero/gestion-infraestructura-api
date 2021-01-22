@@ -100,7 +100,11 @@ class ServidorRepositoryAdapter implements BuscarServidorPort, BuscarTodosGeneri
 				connection.commit();
 			}
 		}catch(SQLException e){
-			throw new PersistenceCustomException(e.getMessage(), e);
+			if (e.getErrorCode() == 1452){
+				throw new PersistenceCustomException("No existe el grupo resolutor especificado", null);
+			} else {
+				throw new PersistenceCustomException(e.getMessage(), e);
+			}
 		}
 
 		return respuesta;

@@ -81,7 +81,11 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 		try {
 			respuesta = crearGenericoPort.crearGenerico(servidorEnviado);
 		}catch(PersistenceCustomException e) {
-			throw new ApplicationException(e.getMessage(), e);
+			if (e.getCause() == null){
+				throw new ApplicationException(e.getMessage(), null);
+			} else {
+				throw new ApplicationException(e.getMessage(), e);
+			}
 		}
 		
 		return respuesta;
