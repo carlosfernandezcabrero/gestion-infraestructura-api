@@ -3,16 +3,19 @@ package com.udemy.gestioninfraestructuraapi.application.in;
 import javax.validation.constraints.NotBlank;
 
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.model.Servidor;
 
 public interface CrearServidorUseCase {
 
-    Servidor crear(CrearServidor crearServidor) throws ApplicationException;
+	/***
+	 * Metodo que crea un Servidor para validacion de datos
+	 * @param crearServidor
+	 * @return boolean - true en el caso de que se cree y false en el caso contrario
+	 * @throws ApplicationException
+	 */
+    boolean crear(CrearServidor crearServidor) throws ApplicationException;
 
-    public final class CrearServidor {
-    	
-        @NotBlank
-        String codigo;
+    final class CrearServidor {
+
         @NotBlank
         String nombre;
         @NotBlank
@@ -21,10 +24,7 @@ public interface CrearServidorUseCase {
         String os;
         @NotBlank
         String grupoResolutor;
-        
-		public String getCodigo() {
-			return codigo;
-		}
+
 		public String getNombre() {
 			return nombre;
 		}
@@ -37,10 +37,7 @@ public interface CrearServidorUseCase {
 		public String getGrupoResolutor() {
 			return grupoResolutor;
 		}
-		
-		public void setCodigo(String codigo) {
-			this.codigo = codigo;
-		}
+
 		public void setNombre(String nombre) {
 			this.nombre = nombre;
 		}

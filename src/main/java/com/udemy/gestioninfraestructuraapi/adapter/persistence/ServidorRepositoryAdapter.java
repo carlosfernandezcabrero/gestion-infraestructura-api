@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
+import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.connection.TransManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,30 +19,37 @@ import com.udemy.gestioninfraestructuraapi.model.Servidor;
 import com.udemy.gestioninfraestructuraapi.resource.DbQuerys;
 
 @Component
-class ServidorRepositoryAdapter implements BuscarServidorPort {
+class ServidorRepositoryAdapter implements BuscarServidorPort, BuscarTodosGenericoPort<Servidor>,
+		CrearGenericoPort<Servidor> {
 
-	private static final String COLUMNANOMBRE = "nombre";
-	private static final String COLUMNAIP = "ip";
-	private static final String COLUMNAOS = "os";
-	private static final String COLUMNACODIGO = "codigo";
+	private static final String COLUMNA_NOMBRE = "nombre";
+	private static final String COLUMNA_IP = "ip";
+	private static final String COLUMNA_OS = "os";
+	private static final String COLUMNA_CODIGO = "codigo";
+	private static final String COLUMNA_GRUPORESOLUTOR = "fk_grupo_resolutor";
+	private final TransManager transManager;
+
 	@Autowired
-	private TransManager transManager;
+	public ServidorRepositoryAdapter(TransManager transManager){
+		this.transManager = transManager;
+	}
 
 	@Override
-	public Servidor buscarServidorPorId(Servidor servidor) throws PersistenceCustomException {
+	public Servidor buscarServidorPorCodigo(Servidor servidor) throws PersistenceCustomException {
 		Servidor servidorRes = null;
 		Connection connection = transManager.connect();
 
-		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCARPORCODIGO)) {
+		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_POR_CODIGO)) {
 			st.setLong(1, servidor.getCodigo());
 
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				servidorRes = new Servidor();
-				servidorRes.setCodigo(rs.getLong(COLUMNACODIGO));
-				servidorRes.setNombre(rs.getString(COLUMNANOMBRE));
-				servidorRes.setIp(rs.getString(COLUMNAIP));
-				servidorRes.setOs(rs.getString(COLUMNAOS));
+				servidorRes.setCodigo(rs.getLong(COLUMNA_CODIGO));
+				servidorRes.setNombre(rs.getString(COLUMNA_NOMBRE));
+				servidorRes.setIp(rs.getString(COLUMNA_IP));
+				servidorRes.setOs(rs.getString(COLUMNA_OS));
+				servidorRes.setGrupoResolutor(rs.getString(COLUMNA_GRUPORESOLUTOR));
 			}
 		} catch (SQLException e) {
 			throw new PersistenceCustomException(e.getMessage(), e);
@@ -56,18 +65,19 @@ class ServidorRepositoryAdapter implements BuscarServidorPort {
 	@Override
 	public List<Servidor> buscarTodos() throws PersistenceCustomException {
 		List<Servidor> servidores = new ArrayList<>();
-		Servidor servidor;
+		Servidor servidorRes;
 		Connection connection = transManager.connect();
 
-		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCARTODOSSERVIDORES)) {
+		try (PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_TODOS_SERVIDORES)) {
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
-				servidor = new Servidor();
-				servidor.setCodigo(rs.getLong(COLUMNACODIGO));
-				servidor.setNombre(rs.getString(COLUMNANOMBRE));
-				servidor.setIp(rs.getString(COLUMNAIP));
-				servidor.setOs(rs.getString(COLUMNAOS));
-				servidores.add(servidor);
+				servidorRes = new Servidor();
+				servidorRes.setCodigo(rs.getLong(COLUMNA_CODIGO));
+				servidorRes.setNombre(rs.getString(COLUMNA_NOMBRE));
+				servidorRes.setIp(rs.getString(COLUMNA_IP));
+				servidorRes.setOs(rs.getString(COLUMNA_OS));
+				servidorRes.setGrupoResolutor(rs.getString(COLUMNA_GRUPORESOLUTOR));
+				servidores.add(servidorRes);
 			}
 		} catch (SQLException e) {
 			throw new PersistenceCustomException(e.getMessage(), e);
@@ -78,5 +88,28 @@ class ServidorRepositoryAdapter implements BuscarServidorPort {
 		}
 
 		return servidores;
+	}
+
+	@Override
+	public boolean crearGenerico(Servidor servidor) throws PersistenceCustomException {
+		Connection connection = transManager.connect();
+		boolean respuesta;
+
+		try(PreparedStatement statement = connection.prepareStatement(DbQuerys.CREAR_SERVIDOR)){
+			statement.setString(1, servidor.getNombre());
+			statement.setString(2, servidor.getIp());
+			statement.setString(3, servidor.getOs());
+			statement.setString(4, servidor.getGrupoResolutor());
+
+			respuesta = statement.executeUpdate() > 0;
+		}catch(SQLException e){
+			throw new PersistenceCustomException(e.getMessage(), e);
+		} finally {
+			if (connection != null) {
+				transManager.closeFinally();
+			}
+		}
+
+		return respuesta;
 	}
 }

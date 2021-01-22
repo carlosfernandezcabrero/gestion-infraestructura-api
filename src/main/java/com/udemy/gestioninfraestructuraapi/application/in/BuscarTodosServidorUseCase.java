@@ -7,6 +7,11 @@ import com.udemy.gestioninfraestructuraapi.model.Servidor;
 
 public interface BuscarTodosServidorUseCase {
 
+    /***
+     * Metodo que busca todos los Servidores
+     * @return List de Servidor
+     * @throws ApplicationException
+     */
     List<Servidor> buscarTodos() throws ApplicationException;
 
 }

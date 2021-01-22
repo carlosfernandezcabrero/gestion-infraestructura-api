@@ -3,7 +3,7 @@ package com.udemy.gestioninfraestructuraapi.adapter.web;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
@@ -33,7 +33,6 @@ class GrupoResolutorControllerTest {
     private static final GrupoResolutor GRUPO_RESOLUTOR = new GrupoResolutor();
     private static final String NOMBRE = "Storage";
 
-    private static final List<GrupoResolutor> GRUPO_RESOLUTORS = new ArrayList<>();
     private static final HttpStatus OK = HttpStatus.OK;
 
     @BeforeEach
@@ -43,11 +42,11 @@ class GrupoResolutorControllerTest {
 
     @Test
     void testTodos() throws ApplicationException, ControllerException {
-        Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenReturn(GRUPO_RESOLUTORS);
+        Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
         final ResponseEntity<List<GrupoResolutor>> responseEntity = grupoResolutorController.todos();
         assertNotNull(responseEntity);
         assertNotNull(responseEntity.getBody());
-        assertEquals(GRUPO_RESOLUTORS, responseEntity.getBody());
+        assertEquals(1, responseEntity.getBody().size());
         assertEquals(OK, responseEntity.getStatusCode());
 
         try {

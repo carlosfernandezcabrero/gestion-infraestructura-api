@@ -7,6 +7,11 @@ import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 
 public interface BuscarTodosGrupoResolutorUseCase {
 
+    /***
+     * Metodo que busca todos los Grupos Resolutores
+     * @return List de GrupoResolutor
+     * @throws ApplicationException
+     */
     List<GrupoResolutor> buscarTodos() throws ApplicationException;
 
 }

@@ -41,4 +41,11 @@ class ServidorTest {
         servidor.setCodigo(id);
         assertEquals(id, servidor.getCodigo());
     }
+
+    @Test
+    void grupoResolutor(){
+        String grupoResolutor = "test";
+        servidor.setGrupoResolutor(grupoResolutor);
+        assertEquals(grupoResolutor, servidor.getGrupoResolutor());
+    }
 }

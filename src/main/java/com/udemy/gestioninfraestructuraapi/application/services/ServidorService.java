@@ -4,6 +4,7 @@ import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorPorCodig
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosServidorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
+import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
@@ -18,10 +19,18 @@ import java.util.List;
 @Service
 class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServidorUseCase, CrearServidorUseCase {
 
+	private final BuscarServidorPort buscarServidorPort;
+	private final BuscarTodosGenericoPort<Servidor> buscarTodosGenericoPort;
+	private final CrearGenericoPort<Servidor> crearGenericoPort;
+
 	@Autowired
-	private BuscarServidorPort buscarServidorPort;
-	@Autowired
-	private CrearGenericoPort<Servidor> crearGenericoPort;
+	public ServidorService(BuscarServidorPort buscarServidorPort,
+						   BuscarTodosGenericoPort<Servidor> buscarTodosGenericoPort,
+						   CrearGenericoPort<Servidor> crearGenericoPort){
+		this.buscarServidorPort = buscarServidorPort;
+		this.buscarTodosGenericoPort = buscarTodosGenericoPort;
+		this.crearGenericoPort = crearGenericoPort;
+	}
 
 	@Override
 	public Servidor buscarServidorPorCodigo(String codigo) throws ApplicationException {
@@ -31,7 +40,7 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 		servidorEnviado.setCodigo(Long.parseLong(codigo));
 
 		try {
-			servidorRespuesta = buscarServidorPort.buscarServidorPorId(servidorEnviado);
+			servidorRespuesta = buscarServidorPort.buscarServidorPorCodigo(servidorEnviado);
 		} catch (PersistenceCustomException e) {
 			throw new ApplicationException(e.getMessage(), e);
 		}
@@ -44,7 +53,7 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 		List<Servidor> servidoresRespuesta;
 
 		try {
-			servidoresRespuesta = buscarServidorPort.buscarTodos();
+			servidoresRespuesta = buscarTodosGenericoPort.buscarTodos();
 		} catch (PersistenceCustomException e) {
 			throw new ApplicationException(e.getMessage(), e);
 		}
@@ -53,23 +62,21 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 	}
 
 	@Override
-	public Servidor crear(CrearServidor crearServidor) throws ApplicationException {
-		Validator.validarNumeroEnteroLargo(crearServidor.getCodigo());
-		
+	public boolean crear(CrearServidor crearServidor) throws ApplicationException {
 		Servidor servidorEnviado = new Servidor();
-		servidorEnviado.setCodigo(Long.parseLong(crearServidor.getCodigo()));
 		servidorEnviado.setIp(crearServidor.getIp());
 		servidorEnviado.setNombre(crearServidor.getNombre());
 		servidorEnviado.setOs(crearServidor.getOs());
+		servidorEnviado.setGrupoResolutor(crearServidor.getGrupoResolutor());
 		
-		Servidor servidorRespuesta = null;
+		boolean respuesta;
 		
 		try {
-			servidorRespuesta = crearGenericoPort.crearGenerico(servidorEnviado);
+			respuesta = crearGenericoPort.crearGenerico(servidorEnviado);
 		}catch(PersistenceCustomException e) {
 			throw new ApplicationException(e.getMessage(), e);
 		}
 		
-		return servidorRespuesta;
+		return respuesta;
 	}
 }

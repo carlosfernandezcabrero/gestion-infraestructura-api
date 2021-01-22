@@ -6,6 +6,7 @@ public class Servidor {
     private String nombre;
     private String ip;
     private String os;
+    private String grupoResolutor;
 
     public String getNombre() {
         return nombre;
@@ -37,6 +38,14 @@ public class Servidor {
 
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
+    }
+
+    public String getGrupoResolutor(){
+        return grupoResolutor;
+    }
+
+    public void setGrupoResolutor(String grupoResolutor){
+        this.grupoResolutor = grupoResolutor;
     }
 
 }

@@ -22,6 +22,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,7 +51,6 @@ class ServidorControllerTest {
 
 	private static final Servidor SERVIDOR = new Servidor();
 	private static final CrearServidor CREAR_SERVIDOR = new CrearServidor();
-	private List<Servidor> servidores = new ArrayList<>();
 	private List<ObjectError> errors;
 
 	@BeforeEach
@@ -72,13 +72,13 @@ class ServidorControllerTest {
 
 	@Test
 	void testBuscarTodos() throws ApplicationException, ControllerException {
-		Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(servidores);
+		Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(Collections.singletonList(SERVIDOR));
 		final ResponseEntity<List<Servidor>> respuesta = servidorController.buscarTodos();
 		final List<Servidor> respuestaBody = respuesta.getBody();
 
 		assertNotNull(respuesta);
 		assertNotNull(respuestaBody);
-		assertEquals(servidores, respuestaBody);
+		assertEquals(1, respuestaBody.size());
 		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
 		
 		try {
@@ -114,11 +114,11 @@ class ServidorControllerTest {
 	@Test
 	void crear() throws ApplicationException, ControllerException {
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-		Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenReturn(SERVIDOR);
-		ResponseEntity<Servidor> servidorRespuesta = servidorController.crear(CREAR_SERVIDOR, bindingResult);
+		Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenReturn(true);
+		ResponseEntity<Boolean> servidorRespuesta = servidorController.crear(CREAR_SERVIDOR, bindingResult);
 		assertNotNull(servidorRespuesta);
 		assertNotNull(servidorRespuesta.getBody());
-		assertEquals(SERVIDOR, servidorRespuesta.getBody());
+		assertTrue(servidorRespuesta.getBody());
 		assertEquals(HttpStatus.CREATED, servidorRespuesta.getStatusCode());
 
 		try {
@@ -130,7 +130,7 @@ class ServidorControllerTest {
 			assertNull(e.getCause());
 			StringBuilder stringBuilder = new StringBuilder();
 			for (String s : CAMPOSERROR) {
-				stringBuilder.append(s + ": " + MENSAJESCAMPOSERROR + " (null)|");
+				stringBuilder.append(s).append(": ").append(MENSAJESCAMPOSERROR).append(" (null)|");
 			}
 			assertEquals(stringBuilder.toString(), e.getMessage());
 		}
@@ -143,5 +143,16 @@ class ServidorControllerTest {
 			assertNotNull(e);
 			assertNotNull(e.getCause());
 		}
+	}
+
+	@Test
+	void crearFailed() throws ApplicationException, ControllerException {
+		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
+		Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenReturn(false);
+		ResponseEntity<Boolean> servidorRespuesta = servidorController.crear(CREAR_SERVIDOR, bindingResult);
+		assertNotNull(servidorRespuesta);
+		assertNotNull(servidorRespuesta.getBody());
+		assertFalse(servidorRespuesta.getBody());
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, servidorRespuesta.getStatusCode());
 	}
 }

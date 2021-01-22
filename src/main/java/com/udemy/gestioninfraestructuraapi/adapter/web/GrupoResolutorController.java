@@ -20,11 +20,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/grupo-resolutor")
 class GrupoResolutorController {
 
-    @Autowired
-    private BuscarTodosGrupoResolutorUseCase buscarTodosGrupoResolutorUseCase;
-    @Autowired
-    private BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase;
+    private final BuscarTodosGrupoResolutorUseCase buscarTodosGrupoResolutorUseCase;
+    private final BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase;
 
+    @Autowired
+    public GrupoResolutorController(BuscarTodosGrupoResolutorUseCase buscarTodosGrupoResolutorUseCase,
+                                    BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase){
+        this.buscarTodosGrupoResolutorUseCase = buscarTodosGrupoResolutorUseCase;
+        this.buscarGrupoResolutorPorNombreUseCase = buscarGrupoResolutorPorNombreUseCase;
+    }
+
+    /***
+     * Punto de entrada para obtener todos los Grupos Resolutores
+     * @return ResponseEntity de List de GrupoResolutor y HttpStatus OK
+     * @throws ControllerException
+     */
     @GetMapping("/")
     public ResponseEntity<List<GrupoResolutor>> todos() throws ControllerException {
         List<GrupoResolutor> gruposResolutores;
@@ -38,9 +48,15 @@ class GrupoResolutorController {
         return new ResponseEntity<>(gruposResolutores, HttpStatus.OK);
     }
 
+    /***
+     * Punto de entrada para obtener un Grupo Resolutor en base a su nombre
+     * @param nombre
+     * @return ResponseEntity de GrupoResolutor y HttpStatus OK
+     * @throws ControllerException
+     */
     @GetMapping("/buscarPorNombre/{nombre}")
     public ResponseEntity<GrupoResolutor> buscarPorNombre(@PathVariable String nombre) throws ControllerException {
-        GrupoResolutor grupoResolutor = null;
+        GrupoResolutor grupoResolutor;
 
         try {
             grupoResolutor = buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(nombre);

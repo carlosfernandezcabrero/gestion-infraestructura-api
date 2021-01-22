@@ -23,13 +23,24 @@ import java.util.List;
 @RequestMapping("/servidor")
 class ServidorController {
 
-	@Autowired
-	private BuscarServidorPorCodigoUseCase buscarServidorPorCodigoUseCase;
-	@Autowired
-	private BuscarTodosServidorUseCase buscarTodosServidorUseCase;
-	@Autowired
-	private CrearServidorUseCase crearServidorUseCase;
+	private final BuscarServidorPorCodigoUseCase buscarServidorPorCodigoUseCase;
+	private final BuscarTodosServidorUseCase buscarTodosServidorUseCase;
+	private final CrearServidorUseCase crearServidorUseCase;
 
+	@Autowired
+	public ServidorController(BuscarServidorPorCodigoUseCase buscarServidorPorCodigoUseCase,
+							  BuscarTodosServidorUseCase buscarTodosServidorUseCase,
+							  CrearServidorUseCase crearServidorUseCase){
+		this.buscarServidorPorCodigoUseCase = buscarServidorPorCodigoUseCase;
+		this.buscarTodosServidorUseCase = buscarTodosServidorUseCase;
+		this.crearServidorUseCase = crearServidorUseCase;
+	}
+
+	/***
+	 * Punto de entrada para obtener todos los Servidores
+	 * @return ResponseEntity de List de Servidor y HttpStatus OK
+	 * @throws ControllerException
+	 */
 	@GetMapping("/")
 	public ResponseEntity<List<Servidor>> buscarTodos() throws ControllerException {
 		List<Servidor> servidores;
@@ -43,6 +54,12 @@ class ServidorController {
 		return new ResponseEntity<>(servidores, HttpStatus.OK);
 	}
 
+	/***
+	 * Punto de entrada para obtener un Servidor por su codigo
+	 * @param codigo
+	 * @return ResponseEntity de Servidor y HttpStatus OK
+	 * @throws ControllerException
+	 */
 	@GetMapping("/buscarPorCodigo/{codigo}")
 	public ResponseEntity<Servidor> buscarPorCodigo(@PathVariable String codigo) throws ControllerException {
 		Servidor servidor;
@@ -56,27 +73,36 @@ class ServidorController {
 		return new ResponseEntity<>(servidor, HttpStatus.OK);
 	}
 
+	/***
+	 * Punto de entrada para crear un nuevo Servidor
+	 * @param crearServidor
+	 * @param bindingResult
+	 * @return Boolean (true en el caso de que se cree y false en el caso contrario) y HttpStatus CREATED
+	 * @throws ControllerException
+	 */
 	@PostMapping("/create")
-	public ResponseEntity<Servidor> crear(@Valid @RequestBody CrearServidor crearServidor, BindingResult bindingResult)
+	public ResponseEntity<Boolean> crear(@Valid @RequestBody CrearServidor crearServidor, BindingResult bindingResult)
 			throws ControllerException {
-		Servidor servidor = null;
+		boolean respuesta;
 		StringBuilder stringBuilder = new StringBuilder();
 
 		try {
 			if (bindingResult.hasErrors()) {
 				for (ObjectError objectError : bindingResult.getAllErrors()) {
 					FieldError fe = (FieldError) objectError;
-					stringBuilder.append(
-							fe.getField() + ": " + fe.getDefaultMessage() + " (" + fe.getRejectedValue() + ")|");
+					stringBuilder.append(fe.getField()).append(": ").append(fe.getDefaultMessage()).append(" (").append(fe.getRejectedValue()).append(")|");
 				}
 				throw new ValidationException(stringBuilder.toString());
 			} else {
-				servidor = crearServidorUseCase.crear(crearServidor);
+				respuesta = crearServidorUseCase.crear(crearServidor);
+				if(respuesta){
+					return new ResponseEntity<>(true, HttpStatus.CREATED);
+				}else{
+					return new ResponseEntity<>(false, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
 			}
 		} catch (ApplicationException e) {
 			throw new ControllerException(e.getMessage(), e);
 		}
-
-		return new ResponseEntity<>(servidor, HttpStatus.CREATED);
 	}
 }
