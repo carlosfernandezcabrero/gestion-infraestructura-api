@@ -86,7 +86,7 @@ class ServidorControllerTest {
 			servidorController.buscarTodos();
 		} catch (ControllerException e) {
 			assertNotNull(e);
-			assertNotNull(e);
+			assertNotNull(e.getCause());
 		}
 	}
 
