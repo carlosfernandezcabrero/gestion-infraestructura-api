@@ -7,6 +7,7 @@ import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
 import com.udemy.gestioninfraestructuraapi.resource.Validator;
@@ -41,6 +42,9 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 
 		try {
 			servidorRespuesta = buscarServidorPort.buscarServidorPorCodigo(servidorEnviado);
+			if (servidorRespuesta == null){
+				throw new NotFoundException();
+			}
 		} catch (PersistenceCustomException e) {
 			throw new ApplicationException(e.getMessage(), e);
 		}
@@ -54,6 +58,9 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 
 		try {
 			servidoresRespuesta = buscarTodosGenericoPort.buscarTodos();
+			if (servidoresRespuesta.isEmpty()){
+				throw new NotFoundException();
+			}
 		} catch (PersistenceCustomException e) {
 			throw new ApplicationException(e.getMessage(), e);
 		}

@@ -11,6 +11,7 @@ import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
@@ -92,6 +93,17 @@ class ServidorServiceTest {
     }
 
     @Test
+    void testBuscarServidorPorCodigoNotFoundException() throws PersistenceCustomException, ApplicationException {
+        try{
+            Mockito.when(buscarServidorPort.buscarServidorPorCodigo(any(Servidor.class))).thenReturn(null);
+            service.buscarServidorPorCodigo(CODIGO_STRING_GOOD);
+        }catch (NotFoundException e){
+            assertNotNull(e);
+            assertNull(e.getCause());
+        }
+    }
+
+    @Test
     void testBuscarTodos() throws ApplicationException, PersistenceCustomException {
         Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenReturn(Collections.singletonList(SERVIDOR));
         final List<Servidor> respuesta = service.buscarTodos();
@@ -108,6 +120,17 @@ class ServidorServiceTest {
     		assertNotNull(e);
     		assertNotNull(e.getCause());
     	}
+    }
+
+    @Test
+    void testBuscarTodosNotFoundException() throws PersistenceCustomException, ApplicationException {
+        try{
+            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenReturn(Collections.emptyList());
+            service.buscarTodos();
+        }catch (NotFoundException e){
+            assertNotNull(e);
+            assertNull(e.getCause());
+        }
     }
     
     @Test
