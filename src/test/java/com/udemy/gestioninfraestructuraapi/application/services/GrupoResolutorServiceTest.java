@@ -3,6 +3,7 @@ package com.udemy.gestioninfraestructuraapi.application.services;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,7 +58,17 @@ class GrupoResolutorServiceTest {
             assertNotNull(e);
             assertNotNull(e.getCause());
         }
+    }
 
+    @Test
+    void buscarTodosNotFoundException() throws PersistenceCustomException, ApplicationException {
+        try{
+            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenReturn(Collections.emptyList());
+            grupoResolutorService.buscarTodos();
+        }catch (NotFoundException e){
+            assertNotNull(e);
+            assertNull(e.getCause());
+        }
     }
 
     @Test
@@ -76,6 +87,17 @@ class GrupoResolutorServiceTest {
         }catch(ApplicationException e){
             assertNotNull(e);
             assertNotNull(e.getCause());
+        }
+    }
+
+    @Test
+    void buscarPorNombreNotFoundExcepton() throws PersistenceCustomException, ApplicationException {
+        try{
+            Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenReturn(null);
+            grupoResolutorService.buscarPorNombre(NOMBRE_GR);
+        }catch (NotFoundException e){
+            assertNotNull(e);
+            assertNull(e.getCause());
         }
     }
 }
