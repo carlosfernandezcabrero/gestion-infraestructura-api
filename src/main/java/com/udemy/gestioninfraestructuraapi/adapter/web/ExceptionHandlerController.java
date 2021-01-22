@@ -3,6 +3,7 @@ package com.udemy.gestioninfraestructuraapi.adapter.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,6 +42,17 @@ class ExceptionHandlerController {
 		}
 
     	return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+	}
+
+	/***
+	 * Metodo que captura las excepciones de tipo NotFoundException
+	 * @param exception
+	 * @return ResponseEntity de ErrorResponse y HttpStatus NO_CONTENT
+	 */
+	@ExceptionHandler(value = NotFoundException.class)
+	public ResponseEntity<ErrorResponse> notFoundException(NotFoundException exception){
+		ErrorResponse response = new ErrorResponse(exception.getMessage());
+		return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
 	}
 	
 }

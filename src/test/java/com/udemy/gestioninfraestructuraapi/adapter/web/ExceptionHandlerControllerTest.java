@@ -1,6 +1,7 @@
 package com.udemy.gestioninfraestructuraapi.adapter.web;
 
 import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
 import com.udemy.gestioninfraestructuraapi.resource.ErrorResponse;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ class ExceptionHandlerControllerTest {
 
     private static final ControllerException CONTROLLER_EXCEPTION_GOOD = new ControllerException("Error en BBDD", new Throwable());
     private static final ValidationException VALIDATION_EXCEPTION = new ValidationException("El campo nombre no debe estar vacio|El id no es correcto|");
+    private static final NotFoundException NOT_FOUND_EXCEPTION = new NotFoundException();
 
     private static final ExceptionHandlerController EXCEPTION_HANDLER_CONTROLLER = new ExceptionHandlerController();
 
@@ -32,5 +34,13 @@ class ExceptionHandlerControllerTest {
         assertNotNull(respuesta);
         assertEquals(2, respuesta.getBody().size());
         assertEquals(HttpStatus.BAD_REQUEST, respuesta.getStatusCode());
+    }
+
+    @Test
+    void notFoundException(){
+        final ResponseEntity<ErrorResponse> responseEntity = EXCEPTION_HANDLER_CONTROLLER.notFoundException(NOT_FOUND_EXCEPTION);
+        assertNotNull(responseEntity);
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 }
