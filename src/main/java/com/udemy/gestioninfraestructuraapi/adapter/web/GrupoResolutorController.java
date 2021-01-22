@@ -11,10 +11,7 @@ import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/grupo-resolutor")
@@ -54,8 +51,8 @@ class GrupoResolutorController {
      * @return ResponseEntity de GrupoResolutor y HttpStatus OK
      * @throws ControllerException
      */
-    @GetMapping("/buscarPorNombre/{nombre}")
-    public ResponseEntity<GrupoResolutor> buscarPorNombre(@PathVariable String nombre) throws ControllerException {
+    @GetMapping("/buscarPorNombre")
+    public ResponseEntity<GrupoResolutor> buscarPorNombre(@RequestParam String nombre) throws ControllerException {
         GrupoResolutor grupoResolutor;
 
         try {
