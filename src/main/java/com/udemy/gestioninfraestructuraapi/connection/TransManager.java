@@ -13,10 +13,4 @@ public interface TransManager {
 	 */
 	Connection connect() throws PersistenceCustomException;
 
-	/***
-	 * Metodo que cierra la conexion con la BBDD implementada
-	 * @throws PersistenceCustomException
-	 */
-	void closeFinally() throws PersistenceCustomException;
-
 }
