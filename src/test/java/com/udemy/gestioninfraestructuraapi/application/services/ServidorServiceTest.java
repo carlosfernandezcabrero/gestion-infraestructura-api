@@ -74,22 +74,18 @@ class ServidorServiceTest {
     }
 
     @Test
-    void testBuscarServidorPorCodigoApplicationException() {
-        Assertions.assertThrows(ApplicationException.class, ()->{
-            Mockito.when(buscarServidorPort.buscarServidorPorCodigo(any(Servidor.class))).thenThrow(PersistenceCustomException.class);
-            service.buscarServidorPorCodigo(CODIGO_STRING_GOOD);
-        });
+    void testBuscarServidorPorCodigoApplicationException() throws PersistenceCustomException {
+    	Mockito.when(buscarServidorPort.buscarServidorPorCodigo(any(Servidor.class))).thenThrow(PersistenceCustomException.class);
+        Assertions.assertThrows(ApplicationException.class, ()->
+            service.buscarServidorPorCodigo(CODIGO_STRING_GOOD)
+        );
     }
 
     @Test
     void testBuscarServidorPorCodigoNumberFormatException() throws ApplicationException {
-        try{
-            service.buscarServidorPorCodigo(CODIGO_STRING_BAD);
-        }catch(ValidationException e){
-            assertNotNull(e);
-            assertNull(e.getCause());
-            assertEquals("El campo debe ser numerico", e.getMessage());
-        }
+    	Assertions.assertThrows(ValidationException.class, ()->
+    		service.buscarServidorPorCodigo(CODIGO_STRING_BAD)
+    	);
     }
 
     @Test
@@ -101,11 +97,11 @@ class ServidorServiceTest {
     }
 
     @Test
-    void testBuscarTodosApplicationException() {
-        Assertions.assertThrows(ApplicationException.class, ()->{
-            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
-            service.buscarTodos();
-        });
+    void testBuscarTodosApplicationException() throws PersistenceCustomException {
+    	Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
+        Assertions.assertThrows(ApplicationException.class, ()->
+            service.buscarTodos()
+        );
     }
     
     @Test
@@ -116,10 +112,10 @@ class ServidorServiceTest {
     }
 
     @Test
-    void testCrearApplicationException() {
-        Assertions.assertThrows(ApplicationException.class, ()->{
-            Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION_NULL);
-            service.crear(CREARSERVIDOR);
-        });
+    void testCrearApplicationException() throws PersistenceCustomException {
+    	Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION_NULL);
+        Assertions.assertThrows(ApplicationException.class, ()->
+            service.crear(CREARSERVIDOR)
+        );
     }
 }

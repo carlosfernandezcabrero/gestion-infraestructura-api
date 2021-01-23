@@ -70,7 +70,7 @@ class ServidorControllerTest {
 	}
 
 	@Test
-	void testBuscarTodos() throws ApplicationException, ControllerException {
+	void testBuscarTodos() throws ApplicationException {
 		Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(Collections.singletonList(SERVIDOR));
 		final ResponseEntity<List<Servidor>> respuesta = servidorController.buscarTodos();
 		final List<Servidor> respuestaBody = respuesta.getBody();
@@ -81,7 +81,7 @@ class ServidorControllerTest {
 	}
 
 	@Test
-	void testBuscarPorCodigo() throws ApplicationException, ControllerException {
+	void testBuscarPorCodigo() throws ApplicationException {
 		Mockito.when(buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(CODIGO_STRING))
 				.thenReturn(SERVIDOR);
 		ResponseEntity<Servidor> respuesta = servidorController.buscarPorCodigo(CODIGO_STRING);
@@ -92,7 +92,7 @@ class ServidorControllerTest {
 	}
 
 	@Test
-	void crear() throws ApplicationException, ControllerException {
+	void crear() throws ApplicationException {
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenReturn(true);
 		ResponseEntity<Boolean> servidorRespuesta = servidorController.crear(CREAR_SERVIDOR, bindingResult);
@@ -120,7 +120,7 @@ class ServidorControllerTest {
 	}
 
 	@Test
-	void crearFailed() throws ApplicationException, ControllerException {
+	void crearFailed() throws ApplicationException {
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenReturn(false);
 		ResponseEntity<Boolean> servidorRespuesta = servidorController.crear(CREAR_SERVIDOR, bindingResult);
@@ -132,17 +132,17 @@ class ServidorControllerTest {
 
 	@Test
 	void testBuscarTodosNotFoundException() throws ApplicationException {
-		Assertions.assertThrows(NotFoundException.class, ()->{
-			Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(Collections.emptyList());
-			servidorController.buscarTodos();
-		});
+		Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(Collections.emptyList());
+		Assertions.assertThrows(NotFoundException.class, ()->
+			servidorController.buscarTodos()
+		);
 	}
 
 	@Test
 	void testBuscarServidorPorCodigoNotFoundException() throws ApplicationException {
-		Assertions.assertThrows(NotFoundException.class, ()->{
-			Mockito.when(buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(CODIGO_STRING)).thenReturn(null);
-			servidorController.buscarPorCodigo(CODIGO_STRING);
-		});
+		Mockito.when(buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(CODIGO_STRING)).thenReturn(null);
+		Assertions.assertThrows(NotFoundException.class, ()->
+			servidorController.buscarPorCodigo(CODIGO_STRING)
+		);
 	}
 }

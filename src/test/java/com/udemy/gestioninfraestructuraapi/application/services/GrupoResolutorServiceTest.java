@@ -50,11 +50,11 @@ class GrupoResolutorServiceTest {
     }
 
     @Test
-    void buscarTodosApplicationException() {
-        Assertions.assertThrows(ApplicationException.class, ()->{
-            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
-            grupoResolutorService.buscarTodos();
-        });
+    void buscarTodosApplicationException() throws PersistenceCustomException {
+    	Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
+        Assertions.assertThrows(ApplicationException.class, ()->
+            grupoResolutorService.buscarTodos()
+        );
     }
 
     @Test
@@ -66,10 +66,10 @@ class GrupoResolutorServiceTest {
     }
 
     @Test
-    void buscarPorNombreApplicationException() {
-        Assertions.assertThrows(ApplicationException.class, ()->{
-            Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenThrow(PersistenceCustomException.class);
-            grupoResolutorService.buscarPorNombre(NOMBRE_GR);
-        });
+    void buscarPorNombreApplicationException() throws PersistenceCustomException {
+    	Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenThrow(PersistenceCustomException.class);
+        Assertions.assertThrows(ApplicationException.class, ()->
+            grupoResolutorService.buscarPorNombre(NOMBRE_GR)
+        );
     }
 }

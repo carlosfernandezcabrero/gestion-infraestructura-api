@@ -1,5 +1,6 @@
 package com.udemy.gestioninfraestructuraapi.exception;
 
+@SuppressWarnings("serial")
 public class NotFoundException extends RuntimeException{
 
     public NotFoundException(){

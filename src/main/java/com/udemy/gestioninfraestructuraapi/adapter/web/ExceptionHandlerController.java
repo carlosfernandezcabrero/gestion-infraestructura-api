@@ -4,25 +4,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
 
 @RestControllerAdvice
 class ExceptionHandlerController {
 
 	/***
-	 * Metodo que captura las excepciones de tipo ControllerException
+	 * Metodo que captura las excepciones de tipo ApplicationException
 	 * @param ex - excepcion
 	 * @return ResponseEntity de String y HttpStatus INTERNAL_SERVER_ERROR
 	 */
-	@ExceptionHandler(value = ControllerException.class)
-    public ResponseEntity<String> controllerException(ControllerException ex) {
+	@ExceptionHandler(value = ApplicationException.class)
+    public ResponseEntity<String> applicationException(ApplicationException ex) {
 		if (ex.getCause() == null){
 			return ResponseEntity.badRequest().body(ex.getMessage());
 		} else {

@@ -9,7 +9,6 @@ import java.util.List;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolutorUseCase;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
 import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 
@@ -43,7 +42,7 @@ class GrupoResolutorControllerTest {
     }
 
     @Test
-    void testTodos() throws ApplicationException, ControllerException {
+    void testTodos() throws ApplicationException {
         Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
         final ResponseEntity<List<GrupoResolutor>> responseEntity = grupoResolutorController.todos();
         assertNotNull(responseEntity);
@@ -53,7 +52,7 @@ class GrupoResolutorControllerTest {
     }
 
     @Test
-    void testBuscarPorNombre() throws ApplicationException, ControllerException {
+    void testBuscarPorNombre() throws ApplicationException {
         Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(GRUPO_RESOLUTOR);
         final ResponseEntity<GrupoResolutor> responseEntity = grupoResolutorController.buscarPorNombre(NOMBRE);
         assertNotNull(responseEntity);
@@ -64,18 +63,18 @@ class GrupoResolutorControllerTest {
 
     @Test
     void buscarTodosNotFoundException() throws ApplicationException {
-        Assertions.assertThrows(NotFoundException.class, ()->{
-            Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenReturn(Collections.emptyList());
-            grupoResolutorController.todos();
-        });
+    	Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenReturn(Collections.emptyList());
+        Assertions.assertThrows(NotFoundException.class, ()->
+        	grupoResolutorController.todos()
+        );
     }
 
     @Test
     void buscarPorNombreNotFoundExcepton() throws ApplicationException {
-        Assertions.assertThrows(NotFoundException.class, ()->{
-            Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(null);
-            grupoResolutorController.buscarPorNombre(NOMBRE);
-        });
+    	Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(null);
+        Assertions.assertThrows(NotFoundException.class, ()->    
+            grupoResolutorController.buscarPorNombre(NOMBRE)
+        );
     }
 
 }
