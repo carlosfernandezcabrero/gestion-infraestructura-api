@@ -7,7 +7,6 @@ import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
 import com.udemy.gestioninfraestructuraapi.resource.Validator;
@@ -42,11 +41,8 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 
 		try {
 			servidorRespuesta = buscarServidorPort.buscarServidorPorCodigo(servidorEnviado);
-			if (servidorRespuesta == null){
-				throw new NotFoundException();
-			}
 		} catch (PersistenceCustomException e) {
-			throw new ApplicationException(e.getMessage(), e);
+			throw new ApplicationException(e.getMessage(), e.getCause());
 		}
 
 		return servidorRespuesta;
@@ -58,11 +54,8 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 
 		try {
 			servidoresRespuesta = buscarTodosGenericoPort.buscarTodos();
-			if (servidoresRespuesta.isEmpty()){
-				throw new NotFoundException();
-			}
 		} catch (PersistenceCustomException e) {
-			throw new ApplicationException(e.getMessage(), e);
+			throw new ApplicationException(e.getMessage(), e.getCause());
 		}
 
 		return servidoresRespuesta;
@@ -81,11 +74,7 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 		try {
 			respuesta = crearGenericoPort.crearGenerico(servidorEnviado);
 		}catch(PersistenceCustomException e) {
-			if (e.getCause() == null){
-				throw new ApplicationException(e.getMessage(), null);
-			} else {
-				throw new ApplicationException(e.getMessage(), e);
-			}
+			throw new ApplicationException(e.getMessage(), e.getCause());
 		}
 		
 		return respuesta;

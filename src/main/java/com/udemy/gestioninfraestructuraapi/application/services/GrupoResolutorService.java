@@ -7,7 +7,6 @@ import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolu
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 
@@ -33,11 +32,8 @@ class GrupoResolutorService implements BuscarGrupoResolutorPorNombreUseCase, Bus
 
         try{
             grupoResolutorList = buscarTodosGenericoPort.buscarTodos();
-            if (grupoResolutorList.isEmpty()){
-                throw new NotFoundException();
-            }
         }catch(PersistenceCustomException e){
-            throw new ApplicationException(e.getMessage(), e);
+            throw new ApplicationException(e.getMessage(), e.getCause());
         }
 
         return grupoResolutorList;
@@ -51,11 +47,8 @@ class GrupoResolutorService implements BuscarGrupoResolutorPorNombreUseCase, Bus
 
         try{
             grupoResolutorRespuesta = buscarGrupoResolutorPort.buscarPorNombre(grupoResolutorEnviado);
-            if (grupoResolutorRespuesta == null){
-                throw new NotFoundException();
-            }
         }catch(PersistenceCustomException e){
-            throw new ApplicationException(e.getMessage(), e);
+            throw new ApplicationException(e.getMessage(), e.getCause());
         }
 
         return grupoResolutorRespuesta;

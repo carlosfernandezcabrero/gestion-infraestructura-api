@@ -1,11 +1,6 @@
 package com.udemy.gestioninfraestructuraapi.exception;
 
-public class ControllerException extends Exception {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class ControllerException extends RuntimeException {
 
 	public ControllerException(String message, Throwable throwable) {
 		super(message, throwable);

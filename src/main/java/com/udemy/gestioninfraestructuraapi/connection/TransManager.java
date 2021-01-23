@@ -9,7 +9,7 @@ public interface TransManager {
 	/***
 	 * Metodo que crea una conexion con la BBDD implementada
 	 * @return Connection
-	 * @throws PersistenceCustomException
+	 * @throws PersistenceCustomException - lanza las excepcones de la capa de persistencia
 	 */
 	Connection connect() throws PersistenceCustomException;
 

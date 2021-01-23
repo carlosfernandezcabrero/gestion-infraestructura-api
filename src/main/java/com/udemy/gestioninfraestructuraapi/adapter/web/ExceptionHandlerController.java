@@ -18,7 +18,7 @@ class ExceptionHandlerController {
 
 	/***
 	 * Metodo que captura las excepciones de tipo ControllerException
-	 * @param ex
+	 * @param ex - excepcion
 	 * @return ResponseEntity de String y HttpStatus INTERNAL_SERVER_ERROR
 	 */
 	@ExceptionHandler(value = ControllerException.class)
@@ -33,7 +33,7 @@ class ExceptionHandlerController {
 
 	/***
 	 * Metodo que captura las excepciones de tipo ValidationException
-	 * @param e
+	 * @param e - excepcion
 	 * @return ResponseEntity de List de String y HttpStatus BAD_REQUEST
 	 */
 	@ExceptionHandler(value = ValidationException.class)
@@ -44,7 +44,7 @@ class ExceptionHandlerController {
 
 	/***
 	 * Metodo que captura las excepciones de tipo NotFoundException
-	 * @param exception
+	 * @param exception - excepcion
 	 * @return ResponseEntity de String y HttpStatus NO_CONTENT
 	 */
 	@ExceptionHandler(value = NotFoundException.class)

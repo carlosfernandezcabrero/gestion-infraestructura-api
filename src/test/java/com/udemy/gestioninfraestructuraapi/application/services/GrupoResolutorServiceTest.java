@@ -3,9 +3,9 @@ package com.udemy.gestioninfraestructuraapi.application.services;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -50,25 +50,11 @@ class GrupoResolutorServiceTest {
     }
 
     @Test
-    void buscarTodosApplicationException() throws PersistenceCustomException {
-        try {
+    void buscarTodosApplicationException() {
+        Assertions.assertThrows(ApplicationException.class, ()->{
             Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
             grupoResolutorService.buscarTodos();
-        }catch(ApplicationException e){
-            assertNotNull(e);
-            assertNotNull(e.getCause());
-        }
-    }
-
-    @Test
-    void buscarTodosNotFoundException() throws PersistenceCustomException, ApplicationException {
-        try{
-            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenReturn(Collections.emptyList());
-            grupoResolutorService.buscarTodos();
-        }catch (NotFoundException e){
-            assertNotNull(e);
-            assertNull(e.getCause());
-        }
+        });
     }
 
     @Test
@@ -80,24 +66,10 @@ class GrupoResolutorServiceTest {
     }
 
     @Test
-    void buscarPorNombreApplicationException() throws PersistenceCustomException {
-        try{
+    void buscarPorNombreApplicationException() {
+        Assertions.assertThrows(ApplicationException.class, ()->{
             Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenThrow(PersistenceCustomException.class);
             grupoResolutorService.buscarPorNombre(NOMBRE_GR);
-        }catch(ApplicationException e){
-            assertNotNull(e);
-            assertNotNull(e.getCause());
-        }
-    }
-
-    @Test
-    void buscarPorNombreNotFoundExcepton() throws PersistenceCustomException, ApplicationException {
-        try{
-            Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenReturn(null);
-            grupoResolutorService.buscarPorNombre(NOMBRE_GR);
-        }catch (NotFoundException e){
-            assertNotNull(e);
-            assertNull(e.getCause());
-        }
+        });
     }
 }

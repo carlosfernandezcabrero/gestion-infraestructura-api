@@ -10,8 +10,10 @@ import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPo
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolutorUseCase;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -48,14 +50,6 @@ class GrupoResolutorControllerTest {
         assertNotNull(responseEntity.getBody());
         assertEquals(1, responseEntity.getBody().size());
         assertEquals(OK, responseEntity.getStatusCode());
-
-        try {
-            Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenThrow(ApplicationException.class);
-            grupoResolutorController.todos();
-        } catch (ControllerException e) {
-            assertNotNull(e);
-            assertNotNull(e.getCause());
-        }
     }
 
     @Test
@@ -66,15 +60,22 @@ class GrupoResolutorControllerTest {
         assertNotNull(responseEntity.getBody());
         assertEquals(GRUPO_RESOLUTOR, responseEntity.getBody());
         assertEquals(OK, responseEntity.getStatusCode());
+    }
 
-        try {
-            Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE))
-                    .thenThrow(ApplicationException.class);
+    @Test
+    void buscarTodosNotFoundException() throws ApplicationException {
+        Assertions.assertThrows(NotFoundException.class, ()->{
+            Mockito.when(buscarTodosGrupoResolutorUseCase.buscarTodos()).thenReturn(Collections.emptyList());
+            grupoResolutorController.todos();
+        });
+    }
+
+    @Test
+    void buscarPorNombreNotFoundExcepton() throws ApplicationException {
+        Assertions.assertThrows(NotFoundException.class, ()->{
+            Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(null);
             grupoResolutorController.buscarPorNombre(NOMBRE);
-        } catch (ControllerException e) {
-            assertNotNull(e);
-            assertNotNull(e.getCause());
-        }
+        });
     }
 
 }

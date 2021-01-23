@@ -10,7 +10,7 @@ public interface BuscarTodosGrupoResolutorUseCase {
     /***
      * Metodo que busca todos los Grupos Resolutores
      * @return List de GrupoResolutor
-     * @throws ApplicationException
+     * @throws ApplicationException - lanza excepciones de la capa de aplicacion
      */
     List<GrupoResolutor> buscarTodos() throws ApplicationException;
 

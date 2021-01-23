@@ -7,9 +7,9 @@ public interface BuscarGrupoResolutorPort {
 
     /***
      * Metodo que busca un Grupo Resolutor por su nombre
-     * @param grupoResolutor
+     * @param grupoResolutor - Objeto que encapsula el nombre del grupo
      * @return GrupoResolutor
-     * @throws PersistenceCustomException
+     * @throws PersistenceCustomException - lanza las excepcones de la capa de persistencia
      */
     GrupoResolutor buscarPorNombre(GrupoResolutor grupoResolutor) throws PersistenceCustomException;
 }

@@ -10,7 +10,7 @@ public interface BuscarTodosServidorUseCase {
     /***
      * Metodo que busca todos los Servidores
      * @return List de Servidor
-     * @throws ApplicationException
+     * @throws ApplicationException - lanza excepciones de la capa de aplicacion
      */
     List<Servidor> buscarTodos() throws ApplicationException;
 

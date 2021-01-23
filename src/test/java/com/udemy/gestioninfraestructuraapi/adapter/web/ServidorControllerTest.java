@@ -4,11 +4,10 @@ import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorPorCodig
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosServidorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase.CrearServidor;
-import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
-import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
+import com.udemy.gestioninfraestructuraapi.exception.*;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -53,10 +52,6 @@ class ServidorControllerTest {
 	private static final CrearServidor CREAR_SERVIDOR = new CrearServidor();
 	private List<ObjectError> errors;
 
-	private static final String MENSAJE_EXCEPTION = "test";
-	private static final ApplicationException APPLICATION_EXCEPTION_NULL = new ApplicationException(MENSAJE_EXCEPTION, null);
-	private static final ApplicationException APPLICATION_EXCEPTION = new ApplicationException(MENSAJE_EXCEPTION, new Throwable());
-
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
@@ -79,19 +74,10 @@ class ServidorControllerTest {
 		Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(Collections.singletonList(SERVIDOR));
 		final ResponseEntity<List<Servidor>> respuesta = servidorController.buscarTodos();
 		final List<Servidor> respuestaBody = respuesta.getBody();
-
 		assertNotNull(respuesta);
 		assertNotNull(respuestaBody);
 		assertEquals(1, respuestaBody.size());
 		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
-		
-		try {
-			Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenThrow(ApplicationException.class);
-			servidorController.buscarTodos();
-		} catch (ControllerException e) {
-			assertNotNull(e);
-			assertNotNull(e.getCause());
-		}
 	}
 
 	@Test
@@ -99,20 +85,10 @@ class ServidorControllerTest {
 		Mockito.when(buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(CODIGO_STRING))
 				.thenReturn(SERVIDOR);
 		ResponseEntity<Servidor> respuesta = servidorController.buscarPorCodigo(CODIGO_STRING);
-
 		assertNotNull(respuesta);
 		assertNotNull(respuesta.getBody());
 		assertEquals(SERVIDOR, respuesta.getBody());
 		assertEquals(HttpStatus.OK, respuesta.getStatusCode());
-		
-		try {
-			Mockito.when(buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(CODIGO_STRING))
-					.thenThrow(ApplicationException.class);
-			servidorController.buscarPorCodigo(CODIGO_STRING);
-		} catch (ControllerException e) {
-			assertNotNull(e);
-			assertNotNull(e.getCause());
-		}
 	}
 
 	@Test
@@ -124,7 +100,10 @@ class ServidorControllerTest {
 		assertNotNull(servidorRespuesta.getBody());
 		assertTrue(servidorRespuesta.getBody());
 		assertEquals(HttpStatus.CREATED, servidorRespuesta.getStatusCode());
+	}
 
+	@Test
+	void crearValidationException(){
 		try {
 			Mockito.when(bindingResult.hasErrors()).thenReturn(true);
 			Mockito.when(bindingResult.getAllErrors()).thenReturn(errors);
@@ -141,32 +120,6 @@ class ServidorControllerTest {
 	}
 
 	@Test
-	void crearControllerExceptionNotNull() throws ApplicationException {
-		try {
-			Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-			Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenThrow(APPLICATION_EXCEPTION);
-			servidorController.crear(CREAR_SERVIDOR, bindingResult);
-		} catch (ControllerException e) {
-			assertNotNull(e);
-			assertNotNull(e.getCause());
-			assertEquals(MENSAJE_EXCEPTION, e.getMessage());
-		}
-	}
-
-	@Test
-	void crearControllerExceptionNull() throws ApplicationException {
-		try {
-			Mockito.when(bindingResult.hasErrors()).thenReturn(false);
-			Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenThrow(APPLICATION_EXCEPTION_NULL);
-			servidorController.crear(CREAR_SERVIDOR, bindingResult);
-		} catch (ControllerException e) {
-			assertNotNull(e);
-			assertNull(e.getCause());
-			assertEquals(MENSAJE_EXCEPTION, e.getMessage());
-		}
-	}
-
-	@Test
 	void crearFailed() throws ApplicationException, ControllerException {
 		Mockito.when(bindingResult.hasErrors()).thenReturn(false);
 		Mockito.when(crearServidorUseCase.crear(CREAR_SERVIDOR)).thenReturn(false);
@@ -175,5 +128,21 @@ class ServidorControllerTest {
 		assertNotNull(servidorRespuesta.getBody());
 		assertFalse(servidorRespuesta.getBody());
 		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, servidorRespuesta.getStatusCode());
+	}
+
+	@Test
+	void testBuscarTodosNotFoundException() throws ApplicationException {
+		Assertions.assertThrows(NotFoundException.class, ()->{
+			Mockito.when(buscarTodosServidorUseCase.buscarTodos()).thenReturn(Collections.emptyList());
+			servidorController.buscarTodos();
+		});
+	}
+
+	@Test
+	void testBuscarServidorPorCodigoNotFoundException() throws ApplicationException {
+		Assertions.assertThrows(NotFoundException.class, ()->{
+			Mockito.when(buscarServidorPorCodigoUseCase.buscarServidorPorCodigo(CODIGO_STRING)).thenReturn(null);
+			servidorController.buscarPorCodigo(CODIGO_STRING);
+		});
 	}
 }

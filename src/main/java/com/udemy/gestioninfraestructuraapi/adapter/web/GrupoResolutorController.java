@@ -4,8 +4,7 @@ import java.util.List;
 
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolutorUseCase;
-import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.ControllerException;
+import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,37 +29,27 @@ class GrupoResolutorController {
     /***
      * Punto de entrada para obtener todos los Grupos Resolutores
      * @return ResponseEntity de List de GrupoResolutor y HttpStatus OK
-     * @throws ControllerException
      */
     @GetMapping("/")
-    public ResponseEntity<List<GrupoResolutor>> todos() throws ControllerException {
-        List<GrupoResolutor> gruposResolutores;
-
-        try {
-            gruposResolutores = buscarTodosGrupoResolutorUseCase.buscarTodos();
-        } catch (ApplicationException e) {
-            throw new ControllerException(e.getMessage(), e);
+    public ResponseEntity<List<GrupoResolutor>> todos() {
+        List<GrupoResolutor> gruposResolutores = buscarTodosGrupoResolutorUseCase.buscarTodos();
+        if (gruposResolutores.isEmpty()) {
+            throw new NotFoundException();
         }
-
         return new ResponseEntity<>(gruposResolutores, HttpStatus.OK);
     }
 
     /***
      * Punto de entrada para obtener un Grupo Resolutor en base a su nombre
-     * @param nombre
+     * @param nombre - cadena que debe contener en el nombre el grupo resolutor buscado
      * @return ResponseEntity de GrupoResolutor y HttpStatus OK
-     * @throws ControllerException
      */
     @GetMapping("/buscarPorNombre")
-    public ResponseEntity<GrupoResolutor> buscarPorNombre(@RequestParam String nombre) throws ControllerException {
-        GrupoResolutor grupoResolutor;
-
-        try {
-            grupoResolutor = buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(nombre);
-        } catch (ApplicationException e) {
-            throw new ControllerException(e.getMessage(), e);
+    public ResponseEntity<GrupoResolutor> buscarPorNombre(@RequestParam String nombre) {
+        GrupoResolutor grupoResolutor = buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(nombre);
+        if (grupoResolutor == null) {
+            throw new NotFoundException();
         }
-
         return new ResponseEntity<>(grupoResolutor, HttpStatus.OK);
     }
 

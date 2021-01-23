@@ -7,9 +7,9 @@ public interface BuscarServidorPorCodigoUseCase {
 
     /***
      * Metodo que busca un Servidor por su codigo
-     * @param codigo
+     * @param codigo - identifica al  servidor
      * @return Servidor
-     * @throws ApplicationException
+     * @throws ApplicationException - lanza excepciones de la capa de aplicacion
      */
     Servidor buscarServidorPorCodigo(String codigo) throws ApplicationException;
 

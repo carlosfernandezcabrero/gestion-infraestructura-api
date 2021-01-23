@@ -8,9 +8,9 @@ public interface CrearServidorUseCase {
 
 	/***
 	 * Metodo que crea un Servidor para validacion de datos
-	 * @param crearServidor
+	 * @param crearServidor - objeto para validar un servidor
 	 * @return boolean - true en el caso de que se cree y false en el caso contrario
-	 * @throws ApplicationException
+	 * @throws ApplicationException - lanza excepciones de aplicacion
 	 */
     boolean crear(CrearServidor crearServidor) throws ApplicationException;
 

@@ -12,10 +12,9 @@ import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 @Component
 class GestionInfraestructuraApiAdapter implements TransManager {
 
-	private Connection connection;
-
 	@Override
 	public Connection connect() throws PersistenceCustomException {
+		Connection connection;
 		try {
 			Properties properties = new Properties();
 			properties.setProperty("user", "rdeveloper");

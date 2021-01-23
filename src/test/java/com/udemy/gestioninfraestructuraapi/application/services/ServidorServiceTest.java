@@ -11,11 +11,11 @@ import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
-import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -48,7 +48,6 @@ class ServidorServiceTest {
 
     private static final String MENSAJE_EXCEPTION = "test";
     private static final PersistenceCustomException PERSISTENCE_CUSTOM_EXCEPTION_NULL = new PersistenceCustomException(MENSAJE_EXCEPTION, null);
-    private static final PersistenceCustomException PERSISTENCE_CUSTOM_EXCEPTION = new PersistenceCustomException(MENSAJE_EXCEPTION, new Throwable());
 
     @BeforeEach
     void setUp() {
@@ -75,14 +74,11 @@ class ServidorServiceTest {
     }
 
     @Test
-    void testBuscarServidorPorCodigoApplicationException() throws PersistenceCustomException {
-        try{
+    void testBuscarServidorPorCodigoApplicationException() {
+        Assertions.assertThrows(ApplicationException.class, ()->{
             Mockito.when(buscarServidorPort.buscarServidorPorCodigo(any(Servidor.class))).thenThrow(PersistenceCustomException.class);
             service.buscarServidorPorCodigo(CODIGO_STRING_GOOD);
-        }catch(ApplicationException e){
-            assertNotNull(e);
-            assertNotNull(e.getCause());
-        }
+        });
     }
 
     @Test
@@ -97,17 +93,6 @@ class ServidorServiceTest {
     }
 
     @Test
-    void testBuscarServidorPorCodigoNotFoundException() throws PersistenceCustomException, ApplicationException {
-        try{
-            Mockito.when(buscarServidorPort.buscarServidorPorCodigo(any(Servidor.class))).thenReturn(null);
-            service.buscarServidorPorCodigo(CODIGO_STRING_GOOD);
-        }catch (NotFoundException e){
-            assertNotNull(e);
-            assertNull(e.getCause());
-        }
-    }
-
-    @Test
     void testBuscarTodos() throws ApplicationException, PersistenceCustomException {
         Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenReturn(Collections.singletonList(SERVIDOR));
         final List<Servidor> respuesta = service.buscarTodos();
@@ -116,25 +101,11 @@ class ServidorServiceTest {
     }
 
     @Test
-    void testBuscarTodosApplicationException() throws PersistenceCustomException{
-    	try {
-    		Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
-    		service.buscarTodos();
-    	}catch(ApplicationException e) {
-    		assertNotNull(e);
-    		assertNotNull(e.getCause());
-    	}
-    }
-
-    @Test
-    void testBuscarTodosNotFoundException() throws PersistenceCustomException, ApplicationException {
-        try{
-            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenReturn(Collections.emptyList());
+    void testBuscarTodosApplicationException() {
+        Assertions.assertThrows(ApplicationException.class, ()->{
+            Mockito.when(buscarTodosGenericoPort.buscarTodos()).thenThrow(PersistenceCustomException.class);
             service.buscarTodos();
-        }catch (NotFoundException e){
-            assertNotNull(e);
-            assertNull(e.getCause());
-        }
+        });
     }
     
     @Test
@@ -143,28 +114,12 @@ class ServidorServiceTest {
     	boolean respuesta = service.crear(CREARSERVIDOR);
     	assertTrue(respuesta);
     }
-    
-    @Test
-    void testCrearApplicationExceptionNotNull() throws PersistenceCustomException {
-    	try {
-	    	Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION);
-	    	service.crear(CREARSERVIDOR);
-    	}catch(ApplicationException e) {
-    		assertNotNull(e);
-    		assertNotNull(e.getCause());
-    		assertEquals(MENSAJE_EXCEPTION, e.getMessage());
-    	}
-    }
 
     @Test
-    void testCrearApplicationExceptionNull() throws PersistenceCustomException {
-        try {
+    void testCrearApplicationException() {
+        Assertions.assertThrows(ApplicationException.class, ()->{
             Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION_NULL);
             service.crear(CREARSERVIDOR);
-        }catch(ApplicationException e) {
-            assertNotNull(e);
-            assertNull(e.getCause());
-            assertEquals(MENSAJE_EXCEPTION, e.getMessage());
-        }
+        });
     }
 }

@@ -7,9 +7,9 @@ public interface BuscarGrupoResolutorPorNombreUseCase {
 
     /***
      * Metodo que busca un Grupo Resolutor por su nombre
-     * @param nombre
+     * @param nombre - cadena que debe contener el nombre del grupo resolutor
      * @return GrupoResolutor
-     * @throws ApplicationException
+     * @throws ApplicationException - lanza excepciones de la aplicacion
      */
     GrupoResolutor buscarPorNombre(String nombre) throws ApplicationException;
 
