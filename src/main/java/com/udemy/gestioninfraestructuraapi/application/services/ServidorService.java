@@ -78,7 +78,7 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 		try {
 			requireExistGrupoResolutor(crearServidor.getGrupoResolutor());
 			respuesta = crearGenericoPort.crearGenerico(servidorEnviado);
-		}catch(PersistenceCustomException e) {
+		}catch(PersistenceCustomException | NoExistGrupoResolutor e) {
 			throw new ApplicationException(e.getMessage(), e.getCause());
 		}
 		
