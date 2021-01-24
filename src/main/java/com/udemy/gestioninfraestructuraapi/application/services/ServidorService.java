@@ -3,6 +3,7 @@ package com.udemy.gestioninfraestructuraapi.application.services;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarServidorPorCodigoUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosServidorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase;
+import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
@@ -22,14 +23,17 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 	private final BuscarServidorPort buscarServidorPort;
 	private final BuscarTodosGenericoPort<Servidor> buscarTodosGenericoPort;
 	private final CrearGenericoPort<Servidor> crearGenericoPort;
+	private final BuscarGrupoResolutorPort buscarGrupoResolutor;
 
 	@Autowired
 	public ServidorService(BuscarServidorPort buscarServidorPort,
 						   BuscarTodosGenericoPort<Servidor> buscarTodosGenericoPort,
-						   CrearGenericoPort<Servidor> crearGenericoPort){
+						   CrearGenericoPort<Servidor> crearGenericoPort,
+						   BuscarGrupoResolutorPort buscarGrupoResolutor){
 		this.buscarServidorPort = buscarServidorPort;
 		this.buscarTodosGenericoPort = buscarTodosGenericoPort;
 		this.crearGenericoPort = crearGenericoPort;
+		this.buscarGrupoResolutor = buscarGrupoResolutor;
 	}
 
 	@Override
@@ -72,11 +76,23 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 		boolean respuesta;
 		
 		try {
+			requireExistGrupoResolutor(crearServidor.getGrupoResolutor());
 			respuesta = crearGenericoPort.crearGenerico(servidorEnviado);
 		}catch(PersistenceCustomException e) {
 			throw new ApplicationException(e.getMessage(), e.getCause());
 		}
 		
 		return respuesta;
+	}
+	
+	/***
+	 * Metodo que comprueba si existe el grupo resolutor especificado para el servidor
+	 * @param grupoResolutor - nombre del grupo resolutor
+	 * @throws PersistenceCustomException - lanza excepciones de la capa de persistencia
+	 */
+	private void requireExistGrupoResolutor(String grupoResolutor) throws PersistenceCustomException {
+		if (buscarGrupoResolutor.buscarPorId(grupoResolutor) == null) {
+			throw new NoExistGrupoResolutor();
+		}
 	}
 }

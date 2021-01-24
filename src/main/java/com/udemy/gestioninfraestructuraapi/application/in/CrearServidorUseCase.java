@@ -53,4 +53,12 @@ public interface CrearServidorUseCase {
 		
     }
     
+    @SuppressWarnings("serial")
+	final class NoExistGrupoResolutor extends RuntimeException {
+    	
+    	public NoExistGrupoResolutor() {
+    		super("No existe el grupo resolutor especificado");
+    	}
+    }
+    
 }

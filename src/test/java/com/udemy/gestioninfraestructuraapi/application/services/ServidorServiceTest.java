@@ -7,12 +7,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase.CrearServidor;
+import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase.NoExistGrupoResolutor;
+import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
 import com.udemy.gestioninfraestructuraapi.application.port.CrearGenericoPort;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
 import com.udemy.gestioninfraestructuraapi.exception.PersistenceCustomException;
 import com.udemy.gestioninfraestructuraapi.exception.ValidationException;
+import com.udemy.gestioninfraestructuraapi.model.GrupoResolutor;
 import com.udemy.gestioninfraestructuraapi.model.Servidor;
 
 import org.junit.jupiter.api.Assertions;
@@ -34,6 +37,8 @@ class ServidorServiceTest {
     private BuscarTodosGenericoPort<Servidor> buscarTodosGenericoPort;
     @Mock
     private CrearGenericoPort<Servidor> crearGenericoPort;
+    @Mock
+    private BuscarGrupoResolutorPort buscarGrupoResolutorPort;
 
     private static final String CODIGO_STRING_GOOD = "1";
     private static final String CODIGO_STRING_BAD = "1sss";
@@ -107,6 +112,7 @@ class ServidorServiceTest {
     @Test
     void testCrear() throws PersistenceCustomException, ApplicationException {
     	Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenReturn(true);
+    	Mockito.when(buscarGrupoResolutorPort.buscarPorId(GRUPORESOLUTOR)).thenReturn(new GrupoResolutor());
     	boolean respuesta = service.crear(CREARSERVIDOR);
     	assertTrue(respuesta);
     }
@@ -114,8 +120,17 @@ class ServidorServiceTest {
     @Test
     void testCrearApplicationException() throws PersistenceCustomException {
     	Mockito.when(crearGenericoPort.crearGenerico(any(Servidor.class))).thenThrow(PERSISTENCE_CUSTOM_EXCEPTION_NULL);
+    	Mockito.when(buscarGrupoResolutorPort.buscarPorId(GRUPORESOLUTOR)).thenReturn(new GrupoResolutor());
         Assertions.assertThrows(ApplicationException.class, ()->
             service.crear(CREARSERVIDOR)
         );
+    }
+    
+    @Test
+    void testCrearNoExistGrupoResolutor() throws PersistenceCustomException {
+    	Mockito.when(buscarGrupoResolutorPort.buscarPorId(GRUPORESOLUTOR)).thenReturn(null);
+    	Assertions.assertThrows(NoExistGrupoResolutor.class, ()->
+    		service.crear(CREARSERVIDOR)
+    	);
     }
 }

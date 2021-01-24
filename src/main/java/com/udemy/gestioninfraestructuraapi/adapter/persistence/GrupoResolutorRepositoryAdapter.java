@@ -71,4 +71,26 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
 
         return grupoResolutorList;
     }
+
+	@Override
+	public GrupoResolutor buscarPorId(String grupoResolutor) throws PersistenceCustomException {
+		GrupoResolutor grupoResolutorObject = null;
+		
+		try(Connection connection = transManager.connect();
+			PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_ID)){
+			statement.setString(1, grupoResolutor);
+			
+			try(ResultSet rs = statement.executeQuery()){
+				if(rs.next()) {
+					grupoResolutorObject = new GrupoResolutor();
+					grupoResolutorObject.setNombre(rs.getString(COLUMNA_NOMBRE));
+                    grupoResolutorObject.setDescripcion(rs.getString(COLUMNA_DESCRIPCION));
+				}
+			}
+		}catch(SQLException e) {
+			throw new PersistenceCustomException(e.getMessage(), e);
+		}
+		
+		return grupoResolutorObject;
+	}
 }
