@@ -1,5 +1,10 @@
 package com.udemy.gestioninfraestructuraapi.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Servidor {
 
     private Long codigo;
@@ -7,45 +12,5 @@ public class Servidor {
     private String ip;
     private String os;
     private String grupoResolutor;
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
-    }
-
-    public String getOs() {
-        return os;
-    }
-
-    public void setOs(String os) {
-        this.os = os;
-    }
-
-    public Long getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Long codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getGrupoResolutor(){
-        return grupoResolutor;
-    }
-
-    public void setGrupoResolutor(String grupoResolutor){
-        this.grupoResolutor = grupoResolutor;
-    }
 
 }
