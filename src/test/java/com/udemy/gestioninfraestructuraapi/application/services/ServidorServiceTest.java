@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase.CrearServidor;
-import com.udemy.gestioninfraestructuraapi.application.in.CrearServidorUseCase.NoExistGrupoResolutor;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarServidorPort;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarTodosGenericoPort;
@@ -124,13 +123,10 @@ class ServidorServiceTest {
         Assertions.assertThrows(ApplicationException.class, ()->
             service.crear(CREARSERVIDOR)
         );
-    }
-    
-    @Test
-    void testCrearNoExistGrupoResolutor() throws PersistenceCustomException {
-    	Mockito.when(buscarGrupoResolutorPort.buscarPorId(GRUPORESOLUTOR)).thenReturn(null);
-    	Assertions.assertThrows(NoExistGrupoResolutor.class, ()->
-    		service.crear(CREARSERVIDOR)
-    	);
+        
+        Mockito.when(buscarGrupoResolutorPort.buscarPorId(GRUPORESOLUTOR)).thenReturn(null);
+        Assertions.assertThrows(ApplicationException.class, ()->
+        	service.crear(CREARSERVIDOR)
+        );
     }
 }

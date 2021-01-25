@@ -68,10 +68,10 @@ class ServidorService implements BuscarServidorPorCodigoUseCase, BuscarTodosServ
 	@Override
 	public boolean crear(CrearServidor crearServidor) throws ApplicationException {
 		Servidor servidorEnviado = new Servidor();
-		servidorEnviado.setIp(crearServidor.getIp());
-		servidorEnviado.setNombre(crearServidor.getNombre());
-		servidorEnviado.setOs(crearServidor.getOs());
-		servidorEnviado.setGrupoResolutor(crearServidor.getGrupoResolutor());
+		servidorEnviado.setIp(crearServidor.getIp().trim());
+		servidorEnviado.setNombre(crearServidor.getNombre().trim());
+		servidorEnviado.setOs(crearServidor.getOs().trim());
+		servidorEnviado.setGrupoResolutor(crearServidor.getGrupoResolutor().trim());
 		
 		boolean respuesta;
 		
