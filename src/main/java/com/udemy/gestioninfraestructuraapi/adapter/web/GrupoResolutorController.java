@@ -2,6 +2,7 @@ package com.udemy.gestioninfraestructuraapi.adapter.web;
 
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorDescripcionUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolutorUseCase;
 import com.udemy.gestioninfraestructuraapi.exception.NotFoundException;
@@ -18,12 +19,15 @@ class GrupoResolutorController {
 
     private final BuscarTodosGrupoResolutorUseCase buscarTodosGrupoResolutorUseCase;
     private final BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase;
+    private final BuscarGrupoResolutorPorDescripcionUseCase buscarGrupoResolutorPorDescripcionUseCase;
 
     @Autowired
     public GrupoResolutorController(BuscarTodosGrupoResolutorUseCase buscarTodosGrupoResolutorUseCase,
-                                    BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase){
+                                    BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase,
+                                    BuscarGrupoResolutorPorDescripcionUseCase buscarGrupoResolutorPorDescripcionUseCase){
         this.buscarTodosGrupoResolutorUseCase = buscarTodosGrupoResolutorUseCase;
         this.buscarGrupoResolutorPorNombreUseCase = buscarGrupoResolutorPorNombreUseCase;
+        this.buscarGrupoResolutorPorDescripcionUseCase = buscarGrupoResolutorPorDescripcionUseCase;
     }
 
     /***
@@ -51,6 +55,20 @@ class GrupoResolutorController {
             throw new NotFoundException();
         }
         return new ResponseEntity<>(grupoResolutor, HttpStatus.OK);
+    }
+
+    /***
+     * Punto de entrada para buscar grupos resolutores por su descripcion
+     * @param descripcion - cadena que debe tener la descripcion
+     * @return ResponseEntity de List de GrupoResolutor y HttpStatus OK
+     */
+    @GetMapping("/buscarPorDescripcion")
+    public ResponseEntity<List<GrupoResolutor>> buscarPorDescripcion(@RequestParam String descripcion){
+        List<GrupoResolutor> grupoResolutorList = buscarGrupoResolutorPorDescripcionUseCase.buscarGrupoResolutorPorDescripcion(descripcion);
+        if (grupoResolutorList.isEmpty()){
+            throw new NotFoundException();
+        }
+        return new ResponseEntity<>(grupoResolutorList, HttpStatus.OK);
     }
 
 }

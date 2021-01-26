@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.Collections;
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorDescripcionUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolutorUseCase;
 import com.udemy.gestioninfraestructuraapi.exception.ApplicationException;
@@ -26,13 +27,17 @@ class GrupoResolutorControllerTest {
 
     @InjectMocks
     private GrupoResolutorController grupoResolutorController;
+
     @Mock
     private BuscarTodosGrupoResolutorUseCase buscarTodosGrupoResolutorUseCase;
     @Mock
     private BuscarGrupoResolutorPorNombreUseCase buscarGrupoResolutorPorNombreUseCase;
+    @Mock
+    private BuscarGrupoResolutorPorDescripcionUseCase descripcionUseCase;
 
     private static final GrupoResolutor GRUPO_RESOLUTOR = new GrupoResolutor();
     private static final String NOMBRE = "Storage";
+    private static final String DESCRIPCION = "test";
 
     private static final HttpStatus OK = HttpStatus.OK;
 
@@ -70,10 +75,27 @@ class GrupoResolutorControllerTest {
     }
 
     @Test
-    void buscarPorNombreNotFoundExcepton() throws ApplicationException {
+    void buscarPorNombreNotFoundException() throws ApplicationException {
     	Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(null);
         Assertions.assertThrows(NotFoundException.class, ()->    
             grupoResolutorController.buscarPorNombre(NOMBRE)
+        );
+    }
+
+    @Test
+    void buscarPorDescripcion(){
+        Mockito.when(descripcionUseCase.buscarGrupoResolutorPorDescripcion(DESCRIPCION)).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
+        final ResponseEntity<List<GrupoResolutor>> responseEntity = grupoResolutorController.buscarPorDescripcion(DESCRIPCION);
+        assertNotNull(responseEntity);
+        assertEquals(1, responseEntity.getBody().size());
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    void buscarPorDescripcionNotFoundException(){
+        Mockito.when(descripcionUseCase.buscarGrupoResolutorPorDescripcion(DESCRIPCION)).thenReturn(Collections.emptyList());
+        Assertions.assertThrows(NotFoundException.class, ()->
+                grupoResolutorController.buscarPorDescripcion(DESCRIPCION)
         );
     }
 

@@ -2,6 +2,7 @@ package com.udemy.gestioninfraestructuraapi.application.services;
 
 import java.util.List;
 
+import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorDescripcionUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarTodosGrupoResolutorUseCase;
 import com.udemy.gestioninfraestructuraapi.application.port.BuscarGrupoResolutorPort;
@@ -14,7 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-class GrupoResolutorService implements BuscarGrupoResolutorPorNombreUseCase, BuscarTodosGrupoResolutorUseCase {
+class GrupoResolutorService implements BuscarGrupoResolutorPorNombreUseCase,
+        BuscarTodosGrupoResolutorUseCase, BuscarGrupoResolutorPorDescripcionUseCase {
 
     private final BuscarTodosGenericoPort<GrupoResolutor> buscarTodosGenericoPort;
     private final BuscarGrupoResolutorPort buscarGrupoResolutorPort;
@@ -54,4 +56,18 @@ class GrupoResolutorService implements BuscarGrupoResolutorPorNombreUseCase, Bus
         return grupoResolutorRespuesta;
     }
 
+    @Override
+    public List<GrupoResolutor> buscarGrupoResolutorPorDescripcion(String descripcion) {
+        GrupoResolutor grupoResolutorEnviado = new GrupoResolutor();
+        grupoResolutorEnviado.setDescripcion(descripcion);
+        List<GrupoResolutor> grupoResolutorList;
+
+        try{
+            grupoResolutorList = buscarGrupoResolutorPort.buscarPorDescripcion(grupoResolutorEnviado);
+        }catch(PersistenceCustomException e){
+            throw new ApplicationException(e.getMessage(), e.getCause());
+        }
+
+        return grupoResolutorList;
+    }
 }

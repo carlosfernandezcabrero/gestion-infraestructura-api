@@ -72,4 +72,20 @@ class GrupoResolutorServiceTest {
             grupoResolutorService.buscarPorNombre(NOMBRE_GR)
         );
     }
+
+    @Test
+    void buscarGrupoResolutorPorDescripcion() throws PersistenceCustomException {
+        Mockito.when(buscarGrupoResolutorPort.buscarPorDescripcion(any(GrupoResolutor.class))).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
+        final List<GrupoResolutor> grupoResolutorList = grupoResolutorService.buscarGrupoResolutorPorDescripcion(DESCRIPCION_GR);
+        assertNotNull(grupoResolutorList);
+        assertEquals(1, grupoResolutorList.size());
+    }
+
+    @Test
+    void buscarGrupoResolutorPorDescripcionApplicationException() throws PersistenceCustomException {
+        Mockito.when(buscarGrupoResolutorPort.buscarPorDescripcion(any(GrupoResolutor.class))).thenThrow(PersistenceCustomException.class);
+        Assertions.assertThrows(ApplicationException.class, ()->
+                grupoResolutorService.buscarGrupoResolutorPorDescripcion(DESCRIPCION_GR)
+        );
+    }
 }

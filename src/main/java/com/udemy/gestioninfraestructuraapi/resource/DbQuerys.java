@@ -31,5 +31,8 @@ public class DbQuerys {
 	public static final String BUSCAR_POR_ID =					SELECT_COMPLETO_GRUPORESOLUTOR
 																+ FROM_GRUPORESOLUTOR
 																+ "WHERE nombre=?";
+	public static  final String BUSCAR_POR_DESCRIPCION =		SELECT_COMPLETO_GRUPORESOLUTOR
+																+ FROM_GRUPORESOLUTOR
+																+ "WHERE descripcion LIKE ?";
 
 }
