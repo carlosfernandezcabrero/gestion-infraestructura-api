@@ -37,7 +37,7 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
             statement.setString(1, "%" + grupoResolutor.getNombre() + "%");
 
             try(ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
+                while (resultSet.next()) {
                     grupoResolutorResp.add(new GrupoResolutor(
                             resultSet.getString(COLUMNA_NOMBRE),
                             resultSet.getString(COLUMNA_DESCRIPCION)
@@ -100,7 +100,7 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
         List<GrupoResolutor> grupoResolutorList = new ArrayList<>();
 
         try(Connection connection = transManager.connect();
-        PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_DESCRIPCION)){
+            PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_DESCRIPCION)){
             statement.setString(1, "%" + grupoResolutor.getDescripcion() + "%");
 
             try(ResultSet resultSet = statement.executeQuery()){
