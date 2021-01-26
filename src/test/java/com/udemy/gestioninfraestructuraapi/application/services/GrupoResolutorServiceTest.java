@@ -59,10 +59,10 @@ class GrupoResolutorServiceTest {
 
     @Test
     void buscarPorNombre() throws PersistenceCustomException, ApplicationException {
-        Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenReturn(GRUPO_RESOLUTOR);
-        final GrupoResolutor respuesta = grupoResolutorService.buscarPorNombre(NOMBRE_GR);
+        Mockito.when(buscarGrupoResolutorPort.buscarPorNombre(any(GrupoResolutor.class))).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
+        final List<GrupoResolutor> respuesta = grupoResolutorService.buscarPorNombre(NOMBRE_GR);
         assertNotNull(respuesta);
-        assertEquals(GRUPO_RESOLUTOR, respuesta);
+        assertEquals(1, respuesta.size());
     }
 
     @Test

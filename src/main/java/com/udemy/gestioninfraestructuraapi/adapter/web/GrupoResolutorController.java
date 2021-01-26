@@ -49,9 +49,9 @@ class GrupoResolutorController {
      * @return ResponseEntity de GrupoResolutor y HttpStatus OK
      */
     @GetMapping("/buscarPorNombre")
-    public ResponseEntity<GrupoResolutor> buscarPorNombre(@RequestParam String nombre) {
-        GrupoResolutor grupoResolutor = buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(nombre);
-        if (grupoResolutor == null) {
+    public ResponseEntity<List<GrupoResolutor>> buscarPorNombre(@RequestParam String nombre) {
+        List<GrupoResolutor> grupoResolutor = buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(nombre);
+        if (grupoResolutor.isEmpty()) {
             throw new NotFoundException();
         }
         return new ResponseEntity<>(grupoResolutor, HttpStatus.OK);

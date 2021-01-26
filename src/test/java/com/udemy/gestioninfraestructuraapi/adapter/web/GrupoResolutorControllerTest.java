@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorDescripcionUseCase;
 import com.udemy.gestioninfraestructuraapi.application.in.BuscarGrupoResolutorPorNombreUseCase;
@@ -58,11 +59,11 @@ class GrupoResolutorControllerTest {
 
     @Test
     void testBuscarPorNombre() throws ApplicationException {
-        Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(GRUPO_RESOLUTOR);
-        final ResponseEntity<GrupoResolutor> responseEntity = grupoResolutorController.buscarPorNombre(NOMBRE);
+        Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
+        final ResponseEntity<List<GrupoResolutor>> responseEntity = grupoResolutorController.buscarPorNombre(NOMBRE);
         assertNotNull(responseEntity);
         assertNotNull(responseEntity.getBody());
-        assertEquals(GRUPO_RESOLUTOR, responseEntity.getBody());
+        assertEquals(1, responseEntity.getBody().size());
         assertEquals(OK, responseEntity.getStatusCode());
     }
 
@@ -76,7 +77,7 @@ class GrupoResolutorControllerTest {
 
     @Test
     void buscarPorNombreNotFoundException() throws ApplicationException {
-    	Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(null);
+    	Mockito.when(buscarGrupoResolutorPorNombreUseCase.buscarPorNombre(NOMBRE)).thenReturn(Collections.emptyList());
         Assertions.assertThrows(NotFoundException.class, ()->    
             grupoResolutorController.buscarPorNombre(NOMBRE)
         );
@@ -87,7 +88,7 @@ class GrupoResolutorControllerTest {
         Mockito.when(descripcionUseCase.buscarGrupoResolutorPorDescripcion(DESCRIPCION)).thenReturn(Collections.singletonList(GRUPO_RESOLUTOR));
         final ResponseEntity<List<GrupoResolutor>> responseEntity = grupoResolutorController.buscarPorDescripcion(DESCRIPCION);
         assertNotNull(responseEntity);
-        assertEquals(1, responseEntity.getBody().size());
+        assertEquals(1, Objects.requireNonNull(responseEntity.getBody()).size());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 

@@ -10,10 +10,10 @@ public interface BuscarGrupoResolutorPort {
     /***
      * Metodo que busca un Grupo Resolutor por su nombre
      * @param grupoResolutor - Objeto que encapsula el nombre del grupo resolutor
-     * @return GrupoResolutor
+     * @return List de GrupoResolutor
      * @throws PersistenceCustomException - lanza las excepcones de la capa de persistencia
      */
-    GrupoResolutor buscarPorNombre(GrupoResolutor grupoResolutor) throws PersistenceCustomException;
+    List<GrupoResolutor> buscarPorNombre(GrupoResolutor grupoResolutor) throws PersistenceCustomException;
     
     /***
      * Metodo que busca un Grupo Resolutor por su nombre (ID)
@@ -28,7 +28,7 @@ public interface BuscarGrupoResolutorPort {
      * seteada en el campo descripcion del parametro
      * @param grupoResolutor - objeto que encapsula la descripcion del grupo resolutor
      * @return List de GrupoResolutor
-     * @throws PersistenceCustomException
+     * @throws PersistenceCustomException - lanza las excepcones de la capa de persistencia
      */
     List<GrupoResolutor> buscarPorDescripcion(GrupoResolutor grupoResolutor) throws PersistenceCustomException;
 }

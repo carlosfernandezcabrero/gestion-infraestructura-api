@@ -42,8 +42,8 @@ class GrupoResolutorService implements BuscarGrupoResolutorPorNombreUseCase,
     }
 
     @Override
-    public GrupoResolutor buscarPorNombre(String nombre) throws ApplicationException {
-        GrupoResolutor grupoResolutorRespuesta;
+    public List<GrupoResolutor> buscarPorNombre(String nombre) throws ApplicationException {
+        List<GrupoResolutor> grupoResolutorRespuesta;
         GrupoResolutor grupoResolutorEnviado = new GrupoResolutor();
         grupoResolutorEnviado.setNombre(nombre);
 

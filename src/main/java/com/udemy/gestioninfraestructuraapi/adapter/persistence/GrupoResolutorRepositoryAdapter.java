@@ -29,8 +29,8 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
     }
 
     @Override
-    public GrupoResolutor buscarPorNombre(GrupoResolutor grupoResolutor) throws PersistenceCustomException {
-        GrupoResolutor grupoResolutorResp = null;
+    public List<GrupoResolutor> buscarPorNombre(GrupoResolutor grupoResolutor) throws PersistenceCustomException {
+        List<GrupoResolutor> grupoResolutorResp = new ArrayList<>();
 
         try(Connection connection = transManager.connect();
             PreparedStatement statement = connection.prepareStatement(DbQuerys.BUSCAR_POR_NOMBRE)){
@@ -38,9 +38,10 @@ class GrupoResolutorRepositoryAdapter implements BuscarGrupoResolutorPort, Busca
 
             try(ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    grupoResolutorResp = new GrupoResolutor();
-                    grupoResolutorResp.setNombre(resultSet.getString(COLUMNA_NOMBRE));
-                    grupoResolutorResp.setDescripcion(resultSet.getString(COLUMNA_DESCRIPCION));
+                    grupoResolutorResp.add(new GrupoResolutor(
+                            resultSet.getString(COLUMNA_NOMBRE),
+                            resultSet.getString(COLUMNA_DESCRIPCION)
+                    ));
                 }
             }
         }catch(SQLException e){
