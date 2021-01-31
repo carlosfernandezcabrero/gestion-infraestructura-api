@@ -39,7 +39,7 @@ class ServidorRepositoryAdapter implements BuscarServidorPort, BuscarTodosGeneri
 		Servidor servidorRes = null;
 
 		try (Connection connection = transManager.connect();
-			 PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_POR_CODIGO)) {
+			 PreparedStatement st = connection.prepareStatement(DbQuerys.BUSCAR_SERVIDOR_POR_CODIGO)) {
 			st.setLong(1, servidor.getCodigo());
 
 			try(ResultSet rs = st.executeQuery()) {

@@ -12,7 +12,7 @@ public class DbQuerys {
 
 	public static final String BUSCAR_TODOS_SERVIDORES = 	SELECT_COMPLETO_SERVIDORES
 															+ FROM_SERVIDORES;
-	public static final String BUSCAR_POR_CODIGO = 			SELECT_COMPLETO_SERVIDORES
+	public static final String BUSCAR_SERVIDOR_POR_CODIGO = 			SELECT_COMPLETO_SERVIDORES
 															+ FROM_SERVIDORES
 															+ "WHERE codigo=?";
 	public static final String CREAR_SERVIDOR =				"INSERT INTO Servidores VALUES (null, ?, ?, ?, ?)";
@@ -25,13 +25,13 @@ public class DbQuerys {
 
 	public static final String BUSCAR_TODOS_GRUPORESOLUTOR = 	SELECT_COMPLETO_GRUPORESOLUTOR
 																+ FROM_GRUPORESOLUTOR;
-	public static final String BUSCAR_POR_NOMBRE = 				SELECT_COMPLETO_GRUPORESOLUTOR
+	public static final String BUSCAR_GRUPORESOLUTOR_POR_NOMBRE = 				SELECT_COMPLETO_GRUPORESOLUTOR
 																+ FROM_GRUPORESOLUTOR
 																+ "WHERE nombre LIKE ?";
-	public static final String BUSCAR_POR_ID =					SELECT_COMPLETO_GRUPORESOLUTOR
+	public static final String BUSCAR_GRUPORESOLUTOR_POR_ID =					SELECT_COMPLETO_GRUPORESOLUTOR
 																+ FROM_GRUPORESOLUTOR
 																+ "WHERE nombre=?";
-	public static  final String BUSCAR_POR_DESCRIPCION =		SELECT_COMPLETO_GRUPORESOLUTOR
+	public static  final String BUSCAR_GRUPORESOLUTOR_POR_DESCRIPCION =		SELECT_COMPLETO_GRUPORESOLUTOR
 																+ FROM_GRUPORESOLUTOR
 																+ "WHERE descripcion LIKE ?";
 
